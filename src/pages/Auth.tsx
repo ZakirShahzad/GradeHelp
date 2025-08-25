@@ -14,12 +14,14 @@ const Auth = () => {
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
   const { toast } = useToast();
   const navigate = useNavigate();
 
   const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
+    setError('');
 
     try {
       if (isLogin) {
@@ -66,11 +68,7 @@ const Auth = () => {
         errorMessage = error.message;
       }
       
-      toast({
-        variant: "destructive",
-        title: "Authentication Error",
-        description: errorMessage,
-      });
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -101,6 +99,12 @@ const Auth = () => {
         {/* Auth Form */}
         <Card className="p-8 card-elevated">
           <form onSubmit={handleAuth} className="space-y-6">
+            {error && (
+              <div className="p-4 bg-orange-50 border border-orange-200 rounded-lg">
+                <p className="text-sm text-orange-800">{error}</p>
+              </div>
+            )}
+            
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
               <Input
@@ -108,7 +112,10 @@ const Auth = () => {
                 type="email"
                 placeholder="teacher@school.edu"
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                onChange={(e) => {
+                  setEmail(e.target.value);
+                  setError('');
+                }}
                 required
                 className="bg-surface"
               />
@@ -122,7 +129,10 @@ const Auth = () => {
                   type={showPassword ? "text" : "password"}
                   placeholder="Enter your password"
                   value={password}
-                  onChange={(e) => setPassword(e.target.value)}
+                  onChange={(e) => {
+                    setPassword(e.target.value);
+                    setError('');
+                  }}
                   required
                   className="bg-surface pr-12"
                 />
@@ -168,6 +178,7 @@ const Auth = () => {
                 setIsLogin(!isLogin);
                 setEmail('');
                 setPassword('');
+                setError('');
               }}
               className="mt-2 w-full"
             >
