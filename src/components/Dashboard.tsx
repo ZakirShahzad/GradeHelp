@@ -39,79 +39,79 @@ export const Dashboard: React.FC<DashboardProps> = ({
   return (
     <div className="min-h-screen bg-surface">
       {/* Header */}
-      <header className="bg-surface-elevated border-b border-border">
-        <div className="max-w-7xl mx-auto px-6 py-6">
+      <header className="bg-surface-elevated/95 border-b border-border backdrop-blur-md">
+        <div className="max-w-7xl mx-auto px-6 lg:px-8 py-8">
           <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-3xl font-bold text-foreground">
+            <div className="space-y-2">
+              <h1 className="text-4xl font-bold text-foreground tracking-tight">
                 Welcome back, {teacherName}
               </h1>
-              <p className="text-muted-foreground mt-1">
+              <p className="text-xl text-muted-foreground">
                 Your AI grading assistant is ready to help
               </p>
             </div>
-            <Button variant="default" size="lg" className="gradient-primary">
-              <Upload className="mr-2 h-4 w-4" />
+            <Button variant="premium" size="xl" className="shadow-xl hover:shadow-2xl">
+              <Upload className="mr-3 h-5 w-5" />
               Upload Assignment
             </Button>
           </div>
         </div>
       </header>
 
-      <div className="max-w-7xl mx-auto px-6 py-8">
+      <div className="max-w-7xl mx-auto px-6 lg:px-8 py-10 animate-fade-in-up">
         {/* Stats Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          <Card className="card-elevated">
-            <CardContent className="p-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+          <Card className="card-elevated hover:shadow-xl transition-all duration-300 group">
+            <CardContent className="p-8">
               <div className="flex items-center">
-                <div className="p-2 bg-success-light rounded-lg">
-                  <CheckCircle className="h-6 w-6 text-success" />
+                <div className="p-3 bg-success-light rounded-xl group-hover:scale-110 transition-transform duration-300">
+                  <CheckCircle className="h-7 w-7 text-success" />
                 </div>
-                <div className="ml-4">
-                  <p className="text-sm font-medium text-muted-foreground">Assignments Graded</p>
-                  <p className="text-3xl font-bold text-foreground">{stats.assignmentsGraded}</p>
+                <div className="ml-6">
+                  <p className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">Assignments Graded</p>
+                  <p className="text-4xl font-bold text-foreground mt-1">{stats.assignmentsGraded}</p>
                 </div>
               </div>
             </CardContent>
           </Card>
 
-          <Card className="card-elevated">
-            <CardContent className="p-6">
+          <Card className="card-elevated hover:shadow-xl transition-all duration-300 group">
+            <CardContent className="p-8">
               <div className="flex items-center">
-                <div className="p-2 bg-primary-light rounded-lg">
-                  <Clock className="h-6 w-6 text-primary" />
+                <div className="p-3 bg-primary-light rounded-xl group-hover:scale-110 transition-transform duration-300">
+                  <Clock className="h-7 w-7 text-primary" />
                 </div>
-                <div className="ml-4">
-                  <p className="text-sm font-medium text-muted-foreground">Hours Saved</p>
-                  <p className="text-3xl font-bold text-foreground">{stats.hoursShaved}</p>
+                <div className="ml-6">
+                  <p className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">Hours Saved</p>
+                  <p className="text-4xl font-bold text-foreground mt-1">{stats.hoursShaved}</p>
                 </div>
               </div>
             </CardContent>
           </Card>
 
-          <Card className="card-elevated">
-            <CardContent className="p-6">
+          <Card className="card-elevated hover:shadow-xl transition-all duration-300 group">
+            <CardContent className="p-8">
               <div className="flex items-center">
-                <div className="p-2 bg-warning-light rounded-lg">
-                  <TrendingUp className="h-6 w-6 text-warning" />
+                <div className="p-3 bg-warning-light rounded-xl group-hover:scale-110 transition-transform duration-300">
+                  <TrendingUp className="h-7 w-7 text-warning" />
                 </div>
-                <div className="ml-4">
-                  <p className="text-sm font-medium text-muted-foreground">Avg Grade</p>
-                  <p className="text-3xl font-bold text-foreground">{stats.averageGrade}%</p>
+                <div className="ml-6">
+                  <p className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">Avg Grade</p>
+                  <p className="text-4xl font-bold text-foreground mt-1">{stats.averageGrade}%</p>
                 </div>
               </div>
             </CardContent>
           </Card>
 
-          <Card className="card-elevated">
-            <CardContent className="p-6">
+          <Card className="card-elevated hover:shadow-xl transition-all duration-300 group">
+            <CardContent className="p-8">
               <div className="flex items-center">
-                <div className="p-2 bg-accent rounded-lg">
-                  <Users className="h-6 w-6 text-primary" />
+                <div className="p-3 bg-accent rounded-xl group-hover:scale-110 transition-transform duration-300">
+                  <Users className="h-7 w-7 text-primary" />
                 </div>
-                <div className="ml-4">
-                  <p className="text-sm font-medium text-muted-foreground">Students Helped</p>
-                  <p className="text-3xl font-bold text-foreground">{stats.studentsHelped}</p>
+                <div className="ml-6">
+                  <p className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">Students Helped</p>
+                  <p className="text-4xl font-bold text-foreground mt-1">{stats.studentsHelped}</p>
                 </div>
               </div>
             </CardContent>

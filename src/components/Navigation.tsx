@@ -28,24 +28,24 @@ export const Navigation: React.FC<NavigationProps> = ({
   ];
 
   return (
-    <nav className="bg-surface-elevated border-b border-border sticky top-0 z-50 backdrop-blur-sm">
-      <div className="max-w-7xl mx-auto px-6">
-        <div className="flex items-center justify-between h-16">
+    <nav className="bg-surface-elevated/95 border-b border-border sticky top-0 z-50 backdrop-blur-md shadow-sm">
+      <div className="max-w-7xl mx-auto px-6 lg:px-8">
+        <div className="flex items-center justify-between h-20">
           {/* Logo */}
-          <div className="flex items-center space-x-4">
-            <div className="flex items-center space-x-2">
-              <div className="p-2 bg-primary rounded-lg">
-                <Brain className="h-6 w-6 text-white" />
+          <div className="flex items-center">
+            <div className="flex items-center space-x-3">
+              <div className="p-3 gradient-primary rounded-xl shadow-glow">
+                <Brain className="h-7 w-7 text-white" />
               </div>
               <div>
-                <h1 className="text-xl font-bold text-foreground">GradeAI</h1>
-                <p className="text-xs text-muted-foreground">Teacher Assistant</p>
+                <h1 className="text-2xl font-bold text-foreground tracking-tight">GradeAI</h1>
+                <p className="text-sm text-muted-foreground font-medium">Teacher Assistant</p>
               </div>
             </div>
           </div>
 
           {/* Navigation Items */}
-          <div className="hidden md:flex items-center space-x-1">
+          <div className="hidden md:flex items-center space-x-2">
             {navItems.map((item) => {
               const Icon = item.icon;
               const isActive = activeTab === item.id;
@@ -54,18 +54,22 @@ export const Navigation: React.FC<NavigationProps> = ({
                 <Button
                   key={item.id}
                   variant={isActive ? "secondary" : "ghost"}
-                  className="relative"
+                  size="lg"
+                  className="relative px-6 py-3 font-medium transition-all duration-200 hover:scale-[1.02]"
                   onClick={() => onTabChange(item.id)}
                 >
-                  <Icon className="mr-2 h-4 w-4" />
+                  <Icon className="mr-3 h-5 w-5" />
                   {item.label}
                   {item.badge && (
                     <Badge 
                       variant="destructive" 
-                      className="ml-2 h-5 px-2 text-xs"
+                      className="ml-3 h-5 px-2 text-xs animate-pulse"
                     >
                       {item.badge}
                     </Badge>
+                  )}
+                  {isActive && (
+                    <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary rounded-full" />
                   )}
                 </Button>
               );
@@ -73,27 +77,30 @@ export const Navigation: React.FC<NavigationProps> = ({
           </div>
 
           {/* User Menu */}
-          <div className="flex items-center space-x-3">
-            <Button variant="ghost" size="sm">
+          <div className="flex items-center space-x-4">
+            <Button variant="ghost" className="px-4 py-2">
               <HelpCircle className="mr-2 h-4 w-4" />
               Help
             </Button>
             
-            <div className="flex items-center space-x-3 pl-3 border-l border-border">
-              <div className="text-right">
-                <p className="text-sm font-medium text-foreground">Ms. Johnson</p>
+            <div className="flex items-center space-x-4 pl-4 border-l border-border">
+              <div className="text-right hidden sm:block">
+                <p className="text-sm font-semibold text-foreground">Ms. Johnson</p>
                 <p className="text-xs text-muted-foreground">English Teacher</p>
               </div>
-              <Button variant="ghost" size="icon" className="rounded-full">
-                <User className="h-4 w-4" />
-              </Button>
+              <div className="relative">
+                <Button variant="ghost" size="icon" className="rounded-full w-11 h-11 bg-gradient-to-br from-primary/10 to-primary/5 hover:from-primary/20 hover:to-primary/10 border border-primary/20">
+                  <User className="h-5 w-5 text-primary" />
+                </Button>
+                <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-success rounded-full border-2 border-surface-elevated"></div>
+              </div>
             </div>
           </div>
         </div>
 
         {/* Mobile Navigation */}
-        <div className="md:hidden pb-3">
-          <div className="flex space-x-1 overflow-x-auto">
+        <div className="md:hidden pb-4 pt-2">
+          <div className="flex space-x-2 overflow-x-auto scrollbar-hide">
             {navItems.map((item) => {
               const Icon = item.icon;
               const isActive = activeTab === item.id;
@@ -103,18 +110,21 @@ export const Navigation: React.FC<NavigationProps> = ({
                   key={item.id}
                   variant={isActive ? "secondary" : "ghost"}
                   size="sm"
-                  className="flex-shrink-0 relative"
+                  className="flex-shrink-0 relative px-4 py-2"
                   onClick={() => onTabChange(item.id)}
                 >
-                  <Icon className="mr-1 h-3 w-3" />
+                  <Icon className="mr-2 h-4 w-4" />
                   {item.label}
                   {item.badge && (
                     <Badge 
                       variant="destructive" 
-                      className="ml-1 h-4 px-1.5 text-xs"
+                      className="ml-2 h-4 px-1.5 text-xs animate-pulse"
                     >
                       {item.badge}
                     </Badge>
+                  )}
+                  {isActive && (
+                    <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary rounded-full" />
                   )}
                 </Button>
               );

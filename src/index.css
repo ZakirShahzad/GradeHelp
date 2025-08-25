@@ -170,6 +170,39 @@
     @apply scale-[1.02];
   }
 
+  /* Scrollbar Hide for Mobile Navigation */
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Page Transition Styles */
+  .page-transition-enter {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  .page-transition-enter-active {
+    opacity: 1;
+    transform: translateY(0);
+    transition: opacity 400ms ease-out, transform 400ms ease-out;
+  }
+
+  .page-transition-exit {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .page-transition-exit-active {
+    opacity: 0;
+    transform: translateY(-20px);
+    transition: opacity 300ms ease-in, transform 300ms ease-in;
+  }
+
   /* Professional Card Styles */
   .card-premium {
     @apply bg-card border border-border rounded-[var(--radius)] shadow-md backdrop-blur-sm;
