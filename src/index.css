@@ -2,41 +2,82 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
-All colors MUST be HSL.
-*/
+/* Premium Educational SaaS Design System - Professional & Polished */
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    /* Modern Educational Brand Colors */
+    --background: 250 100% 99%;
+    --foreground: 234 16% 12%;
 
+    /* Card & Surface Colors */
     --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    --card-foreground: 234 16% 12%;
+    --surface: 245 25% 98%;
+    --surface-elevated: 0 0% 100%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
+    /* AI & Technology Brand */
+    --primary: 236 72% 56%;
+    --primary-foreground: 0 0% 100%;
+    --primary-light: 236 72% 90%;
+    --primary-glow: 236 100% 75%;
 
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
+    /* Professional Secondary */
+    --secondary: 220 14% 96%;
+    --secondary-foreground: 234 16% 25%;
+    --secondary-hover: 220 14% 92%;
 
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    /* Educational Success */
+    --success: 142 76% 36%;
+    --success-foreground: 0 0% 100%;
+    --success-light: 142 76% 95%;
 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    /* Warning & Progress */
+    --warning: 38 92% 50%;
+    --warning-foreground: 0 0% 100%;
+    --warning-light: 38 92% 95%;
 
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    /* Subtle UI Elements */
+    --muted: 220 14% 96%;
+    --muted-foreground: 234 16% 45%;
+    --accent: 236 72% 96%;
+    --accent-foreground: 236 72% 20%;
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
+    /* Interactive States */
+    --hover: 236 72% 94%;
+    --active: 236 72% 88%;
+    --focus: 236 72% 56%;
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
+    /* System Colors */
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 220 14% 90%;
+    --input: 220 14% 96%;
+    --ring: 236 72% 56%;
 
-    --radius: 0.5rem;
+    /* Premium Gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary-glow)));
+    --gradient-success: linear-gradient(135deg, hsl(var(--success)), hsl(142 76% 55%));
+    --gradient-surface: linear-gradient(180deg, hsl(var(--surface-elevated)), hsl(var(--surface)));
+    --gradient-hero: linear-gradient(135deg, hsl(236 72% 56%), hsl(260 68% 60%), hsl(284 84% 64%));
+
+    /* Sophisticated Shadows */
+    --shadow-sm: 0 1px 2px 0 hsl(var(--foreground) / 0.05);
+    --shadow-md: 0 4px 6px -1px hsl(var(--foreground) / 0.1), 0 2px 4px -2px hsl(var(--foreground) / 0.1);
+    --shadow-lg: 0 10px 15px -3px hsl(var(--foreground) / 0.1), 0 4px 6px -4px hsl(var(--foreground) / 0.1);
+    --shadow-xl: 0 20px 25px -5px hsl(var(--foreground) / 0.1), 0 8px 10px -6px hsl(var(--foreground) / 0.1);
+    --shadow-glow: 0 0 40px hsl(var(--primary) / 0.15);
+
+    /* Professional Typography */
+    --font-heading: "Inter", system-ui, -apple-system, sans-serif;
+    --font-body: "Inter", system-ui, -apple-system, sans-serif;
+    --font-mono: "JetBrains Mono", monospace;
+
+    /* Smooth Transitions */
+    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-bounce: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+
+    --radius: 0.75rem;
 
     --sidebar-background: 0 0% 98%;
 
@@ -100,6 +141,78 @@ All colors MUST be HSL.
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground font-[var(--font-body)];
+  }
+
+  /* Premium Utility Classes */
+  .gradient-primary {
+    background: var(--gradient-primary);
+  }
+
+  .gradient-success {
+    background: var(--gradient-success);
+  }
+
+  .gradient-hero {
+    background: var(--gradient-hero);
+  }
+
+  .shadow-glow {
+    box-shadow: var(--shadow-glow);
+  }
+
+  /* Smooth Interactive Elements */
+  .interactive {
+    @apply transition-all duration-300 ease-out;
+  }
+
+  .interactive:hover {
+    @apply scale-[1.02];
+  }
+
+  /* Professional Card Styles */
+  .card-premium {
+    @apply bg-card border border-border rounded-[var(--radius)] shadow-md backdrop-blur-sm;
+  }
+
+  .card-elevated {
+    @apply card-premium shadow-lg hover:shadow-xl transition-shadow duration-300;
+  }
+
+  /* Text Styles */
+  .text-gradient {
+    background: var(--gradient-primary);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+}
+
+@layer components {
+  /* Educational Progress Indicator */
+  .progress-ring {
+    @apply relative inline-flex;
+  }
+
+  .progress-ring::before {
+    content: '';
+    @apply absolute inset-0 rounded-full bg-gradient-to-r from-primary to-primary-glow opacity-20 animate-pulse;
+  }
+
+  /* Loading Animation */
+  .loading-dots {
+    @apply inline-flex space-x-1;
+  }
+
+  .loading-dots > div {
+    @apply w-2 h-2 bg-primary rounded-full animate-bounce;
+  }
+
+  .loading-dots > div:nth-child(2) {
+    animation-delay: 0.1s;
+  }
+
+  .loading-dots > div:nth-child(3) {
+    animation-delay: 0.2s;
   }
 }
