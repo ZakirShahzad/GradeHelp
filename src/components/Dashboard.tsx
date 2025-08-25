@@ -40,27 +40,27 @@ export const Dashboard: React.FC<DashboardProps> = ({
     <div className="min-h-screen bg-surface">
       {/* Header */}
       <header className="bg-surface-elevated/95 border-b border-border backdrop-blur-md">
-        <div className="max-w-7xl mx-auto px-6 lg:px-8 py-8">
+        <div className="max-w-7xl mx-auto px-6 lg:px-8 py-6">
           <div className="flex items-center justify-between">
-            <div className="space-y-2">
-              <h1 className="text-4xl font-bold text-foreground tracking-tight">
+            <div className="space-y-1">
+              <h1 className="text-3xl font-bold text-foreground tracking-tight">
                 Welcome back, {teacherName}
               </h1>
-              <p className="text-xl text-muted-foreground">
+              <p className="text-lg text-muted-foreground">
                 Your AI grading assistant is ready to help
               </p>
             </div>
-            <Button variant="premium" size="xl" className="shadow-xl hover:shadow-2xl">
-              <Upload className="mr-3 h-5 w-5" />
+            <Button variant="premium" size="lg" className="shadow-lg hover:shadow-xl">
+              <Upload className="mr-2 h-4 w-4" />
               Upload Assignment
             </Button>
           </div>
         </div>
       </header>
 
-      <div className="max-w-7xl mx-auto px-6 lg:px-8 py-10 animate-fade-in-up">
+      <div className="max-w-7xl mx-auto px-6 lg:px-8 py-8 animate-fade-in-up">
         {/* Stats Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           <Card className="card-elevated hover:shadow-xl transition-all duration-300 group">
             <CardContent className="p-8">
               <div className="flex items-center">

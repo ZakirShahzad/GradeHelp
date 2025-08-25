@@ -87,17 +87,17 @@ export const UploadInterface: React.FC = () => {
   return (
     <div className="min-h-screen bg-surface">
       <header className="bg-surface-elevated/95 border-b border-border backdrop-blur-md">
-        <div className="max-w-4xl mx-auto px-6 lg:px-8 py-8">
-          <div className="space-y-2">
-            <h1 className="text-4xl font-bold text-foreground tracking-tight">Upload Assignment</h1>
-            <p className="text-xl text-muted-foreground">
+        <div className="max-w-4xl mx-auto px-6 lg:px-8 py-6">
+          <div className="space-y-1">
+            <h1 className="text-3xl font-bold text-foreground tracking-tight">Upload Assignment</h1>
+            <p className="text-lg text-muted-foreground">
               Upload student work for AI-powered grading and feedback
             </p>
           </div>
         </div>
       </header>
 
-      <div className="max-w-4xl mx-auto px-6 lg:px-8 py-10 animate-fade-in-up">
+      <div className="max-w-4xl mx-auto px-6 lg:px-8 py-8 animate-fade-in-up">
         <div className="space-y-8">
           {/* Assignment Details */}
           <Card className="card-elevated">
