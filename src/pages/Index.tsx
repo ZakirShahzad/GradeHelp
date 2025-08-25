@@ -2,10 +2,16 @@ import React, { useState } from 'react';
 import Navigation from '@/components/Navigation';
 import Dashboard from '@/components/Dashboard';
 import UploadInterface from '@/components/UploadInterface';
+import Landing from '@/pages/Landing';
 import { FileText, Settings } from 'lucide-react';
 
 const Index = () => {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [activeTab, setActiveTab] = useState('dashboard');
+
+  if (!isLoggedIn) {
+    return <Landing onLogin={() => setIsLoggedIn(true)} />;
+  }
 
   const renderContent = () => {
     const content = (() => {

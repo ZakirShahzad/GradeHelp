@@ -38,7 +38,7 @@ export const Navigation: React.FC<NavigationProps> = ({
                 <Brain className="h-6 w-6 text-white" />
               </div>
               <div>
-                <h1 className="text-xl font-bold text-foreground tracking-tight">GradeAI</h1>
+                <h1 className="text-xl font-bold text-foreground tracking-tight">GradeHelp</h1>
                 <p className="text-xs text-muted-foreground font-medium">Teacher Assistant</p>
               </div>
             </div>
