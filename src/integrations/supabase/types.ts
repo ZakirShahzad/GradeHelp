@@ -95,26 +95,44 @@ export type Database = {
         Row: {
           created_at: string
           display_name: string | null
+          grade_levels: string[] | null
           id: string
+          onboarding_completed: boolean | null
+          preferred_grading_style: string | null
           school_name: string | null
+          student_count: number | null
+          subjects: string[] | null
           updated_at: string
           user_id: string
+          years_teaching: number | null
         }
         Insert: {
           created_at?: string
           display_name?: string | null
+          grade_levels?: string[] | null
           id?: string
+          onboarding_completed?: boolean | null
+          preferred_grading_style?: string | null
           school_name?: string | null
+          student_count?: number | null
+          subjects?: string[] | null
           updated_at?: string
           user_id: string
+          years_teaching?: number | null
         }
         Update: {
           created_at?: string
           display_name?: string | null
+          grade_levels?: string[] | null
           id?: string
+          onboarding_completed?: boolean | null
+          preferred_grading_style?: string | null
           school_name?: string | null
+          student_count?: number | null
+          subjects?: string[] | null
           updated_at?: string
           user_id?: string
+          years_teaching?: number | null
         }
         Relationships: []
       }

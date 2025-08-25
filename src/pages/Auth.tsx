@@ -7,6 +7,7 @@ import { GraduationCap, Eye, EyeOff } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { Link, useNavigate } from 'react-router-dom';
+import TeacherQuestionnaire from '@/components/TeacherQuestionnaire';
 
 const Auth = () => {
   const [isLogin, setIsLogin] = useState(true);
@@ -17,6 +18,7 @@ const Auth = () => {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [showQuestionnaire, setShowQuestionnaire] = useState(false);
   const { toast } = useToast();
   const navigate = useNavigate();
 
@@ -59,9 +61,10 @@ const Auth = () => {
         
         if (error) throw error;
         
+        setShowQuestionnaire(true);
         toast({
           title: "Account created!",
-          description: "Please check your email to verify your account.",
+          description: "Please complete your teaching profile to get started.",
         });
       }
     } catch (error: any) {
@@ -82,6 +85,15 @@ const Auth = () => {
       setLoading(false);
     }
   };
+
+  const handleQuestionnaireComplete = () => {
+    setShowQuestionnaire(false);
+  };
+
+  // Show questionnaire if user just signed up
+  if (showQuestionnaire) {
+    return <TeacherQuestionnaire onComplete={handleQuestionnaireComplete} />;
+  }
 
   return (
     <div className="min-h-screen bg-gradient-hero flex items-center justify-center p-4">
