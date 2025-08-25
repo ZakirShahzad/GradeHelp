@@ -1,6 +1,7 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { useAuth } from '@/hooks/useAuth';
 import { 
   Brain, 
   Home, 
@@ -8,7 +9,8 @@ import {
   FileText, 
   Settings, 
   HelpCircle,
-  User
+  User,
+  LogOut
 } from 'lucide-react';
 
 interface NavigationProps {
@@ -20,6 +22,12 @@ export const Navigation: React.FC<NavigationProps> = ({
   activeTab = 'dashboard',
   onTabChange = () => {}
 }) => {
+  const { signOut } = useAuth();
+  
+  const handleLogout = async () => {
+    await signOut();
+  };
+
   const navItems = [
     { id: 'dashboard', label: 'Dashboard', icon: Home },
     { id: 'upload', label: 'Upload', icon: Upload },
@@ -83,8 +91,8 @@ export const Navigation: React.FC<NavigationProps> = ({
             
             <div className="flex items-center space-x-3 pl-3 border-l border-border">
               <div className="text-right hidden lg:block">
-                <p className="text-sm font-semibold text-foreground">Ms. Johnson</p>
-                <p className="text-xs text-muted-foreground">English Teacher</p>
+                <p className="text-sm font-semibold text-foreground">Teacher</p>
+                <p className="text-xs text-muted-foreground">GradeHelp User</p>
               </div>
               <div className="relative">
                 <Button variant="ghost" size="icon" className="rounded-full w-9 h-9 bg-gradient-to-br from-primary/10 to-primary/5 hover:from-primary/20 hover:to-primary/10 border border-primary/20">
@@ -92,6 +100,15 @@ export const Navigation: React.FC<NavigationProps> = ({
                 </Button>
                 <div className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 bg-success rounded-full border border-surface-elevated"></div>
               </div>
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                className="w-9 h-9 text-muted-foreground hover:text-destructive"
+                onClick={handleLogout}
+                title="Sign Out"
+              >
+                <LogOut className="h-4 w-4" />
+              </Button>
             </div>
           </div>
         </div>

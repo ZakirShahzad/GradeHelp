@@ -1,16 +1,40 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Navigation from '@/components/Navigation';
 import Dashboard from '@/components/Dashboard';
 import UploadInterface from '@/components/UploadInterface';
 import Landing from '@/pages/Landing';
+import { useAuth } from '@/hooks/useAuth';
 import { FileText, Settings } from 'lucide-react';
 
 const Index = () => {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [activeTab, setActiveTab] = useState('dashboard');
+  const { isAuthenticated, loading } = useAuth();
+  const navigate = useNavigate();
 
-  if (!isLoggedIn) {
-    return <Landing onLogin={() => setIsLoggedIn(true)} />;
+  useEffect(() => {
+    if (!loading && !isAuthenticated) {
+      // User is not authenticated, show landing page with auth redirect
+    }
+  }, [isAuthenticated, loading]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center space-y-4">
+          <div className="loading-dots">
+            <div></div>
+            <div></div>
+            <div></div>
+          </div>
+          <p className="text-muted-foreground">Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!isAuthenticated) {
+    return <Landing onLogin={() => navigate('/auth')} />;
   }
 
   const renderContent = () => {
