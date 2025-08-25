@@ -12,7 +12,9 @@ const Auth = () => {
   const [isLogin, setIsLogin] = useState(true);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const { toast } = useToast();
@@ -38,6 +40,13 @@ const Auth = () => {
         });
         navigate('/');
       } else {
+        // Validate password confirmation for signup
+        if (password !== confirmPassword) {
+          setError("Passwords don't match. Please try again.");
+          setLoading(false);
+          return;
+        }
+
         const redirectUrl = `${window.location.origin}/`;
         
         const { error } = await supabase.auth.signUp({
@@ -117,7 +126,7 @@ const Auth = () => {
                   setError('');
                 }}
                 required
-                className="bg-surface"
+                className="bg-surface transition-colors"
               />
             </div>
 
@@ -134,7 +143,7 @@ const Auth = () => {
                     setError('');
                   }}
                   required
-                  className="bg-surface pr-12"
+                  className="bg-surface pr-12 transition-colors"
                 />
                 <button
                   type="button"
@@ -145,6 +154,33 @@ const Auth = () => {
                 </button>
               </div>
             </div>
+
+            {!isLogin && (
+              <div className="space-y-2 animate-fade-in">
+                <Label htmlFor="confirmPassword">Confirm Password</Label>
+                <div className="relative">
+                  <Input
+                    id="confirmPassword"
+                    type={showConfirmPassword ? "text" : "password"}
+                    placeholder="Confirm your password"
+                    value={confirmPassword}
+                    onChange={(e) => {
+                      setConfirmPassword(e.target.value);
+                      setError('');
+                    }}
+                    required
+                    className="bg-surface pr-12 transition-colors"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                  >
+                    {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  </button>
+                </div>
+              </div>
+            )}
 
             <Button 
               type="submit" 
@@ -178,9 +214,10 @@ const Auth = () => {
                 setIsLogin(!isLogin);
                 setEmail('');
                 setPassword('');
+                setConfirmPassword('');
                 setError('');
               }}
-              className="mt-2 w-full"
+              className="mt-2 w-full transition-colors"
             >
               {isLogin ? 'Create Account' : 'Sign In'}
             </Button>
