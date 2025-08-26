@@ -29,6 +29,7 @@ interface TeacherQuestionnaireProps {
 
 const TeacherQuestionnaire: React.FC<TeacherQuestionnaireProps> = ({ onComplete }) => {
   const [formData, setFormData] = useState({
+    displayName: '',
     schoolName: '',
     gradeLevels: [] as string[],
     subjects: [] as string[],
@@ -81,6 +82,7 @@ const TeacherQuestionnaire: React.FC<TeacherQuestionnaireProps> = ({ onComplete 
       const { error } = await supabase
         .from('profiles')
         .update({
+          display_name: formData.displayName,
           school_name: formData.schoolName,
           grade_levels: formData.gradeLevels,
           subjects: formData.subjects,
@@ -134,6 +136,23 @@ const TeacherQuestionnaire: React.FC<TeacherQuestionnaireProps> = ({ onComplete 
                 <p className="text-sm text-orange-800">{error}</p>
               </div>
             )}
+
+            {/* Display Name */}
+            <div className="space-y-2">
+              <Label htmlFor="displayName" className="flex items-center space-x-2">
+                <Users className="h-4 w-4" />
+                <span>Your Name</span>
+              </Label>
+              <Input
+                id="displayName"
+                type="text"
+                placeholder="How should we address you? (e.g., Ms. Johnson, Mr. Smith)"
+                value={formData.displayName}
+                onChange={(e) => setFormData(prev => ({ ...prev, displayName: e.target.value }))}
+                className="bg-surface transition-colors"
+                required
+              />
+            </div>
 
             {/* School Name */}
             <div className="space-y-2">
@@ -257,7 +276,7 @@ const TeacherQuestionnaire: React.FC<TeacherQuestionnaireProps> = ({ onComplete 
               type="submit" 
               className="w-full" 
               size="lg"
-              disabled={loading || formData.gradeLevels.length === 0 || formData.subjects.length === 0}
+              disabled={loading || !formData.displayName.trim() || formData.gradeLevels.length === 0 || formData.subjects.length === 0}
             >
               {loading ? (
                 <div className="flex items-center space-x-2">
