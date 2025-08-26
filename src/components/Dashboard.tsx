@@ -21,7 +21,11 @@ import { useProfile } from '@/hooks/useProfile';
 import { useDashboardStats } from '@/hooks/useDashboardStats';
 import { useRecentAssignments } from '@/hooks/useRecentAssignments';
 
-export const Dashboard: React.FC = () => {
+interface DashboardProps {
+  onTabChange?: (tab: string) => void;
+}
+
+export const Dashboard: React.FC<DashboardProps> = ({ onTabChange }) => {
   const { profile, loading: profileLoading } = useProfile();
   const { stats, loading: statsLoading } = useDashboardStats();
   const { assignments, loading: assignmentsLoading } = useRecentAssignments(3);
@@ -64,7 +68,12 @@ export const Dashboard: React.FC = () => {
                 </>
               )}
             </div>
-            <Button variant="premium" size="lg" className="shadow-lg hover:shadow-xl">
+            <Button 
+              variant="premium" 
+              size="lg" 
+              className="shadow-lg hover:shadow-xl"
+              onClick={() => onTabChange?.('upload')}
+            >
               <Upload className="mr-2 h-4 w-4" />
               Upload Assignment
             </Button>
@@ -190,7 +199,10 @@ export const Dashboard: React.FC = () => {
                     <p className="text-muted-foreground mb-4">
                       Create your first assignment to get started with AI-powered grading
                     </p>
-                    <Button variant="outline">
+                    <Button 
+                      variant="outline"
+                      onClick={() => onTabChange?.('upload')}
+                    >
                       <Upload className="mr-2 h-4 w-4" />
                       Upload Assignment
                     </Button>
@@ -242,7 +254,11 @@ export const Dashboard: React.FC = () => {
                     
                     {assignments.length >= 3 && (
                       <div className="pt-4 border-t border-border">
-                        <Button variant="ghost" className="w-full">
+                        <Button 
+                          variant="ghost" 
+                          className="w-full"
+                          onClick={() => onTabChange?.('assignments')}
+                        >
                           View All Assignments
                         </Button>
                       </div>
@@ -291,28 +307,6 @@ export const Dashboard: React.FC = () => {
               </CardContent>
             </Card>
 
-            {/* Quick Actions */}
-            <Card className="card-elevated">
-              <CardHeader>
-                <CardTitle>Quick Actions</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-3">
-                  <Button variant="outline" className="w-full justify-start">
-                    <Upload className="mr-2 h-4 w-4" />
-                    Upload New Assignment
-                  </Button>
-                  <Button variant="outline" className="w-full justify-start">
-                    <BookOpen className="mr-2 h-4 w-4" />
-                    View All Assignments
-                  </Button>
-                  <Button variant="outline" className="w-full justify-start">
-                    <Award className="mr-2 h-4 w-4" />
-                    Grading Settings
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
           </div>
         </div>
       </div>

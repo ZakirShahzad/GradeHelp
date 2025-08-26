@@ -41,7 +41,7 @@ const Index = () => {
     const content = (() => {
       switch (activeTab) {
         case 'dashboard':
-          return <Dashboard />;
+          return <Dashboard onTabChange={setActiveTab} />;
         case 'upload':
           return <UploadInterface />;
         case 'assignments':
