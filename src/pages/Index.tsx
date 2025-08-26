@@ -4,6 +4,7 @@ import Navigation from '@/components/Navigation';
 import Dashboard from '@/components/Dashboard';
 import UploadInterface from '@/components/UploadInterface';
 import AssignmentsPage from '@/components/AssignmentsPage';
+import BulkGradingInterface from '@/components/BulkGradingInterface';
 import SettingsPage from '@/components/SettingsPage';
 import Landing from '@/pages/Landing';
 import { useAuth } from '@/hooks/useAuth';
@@ -44,7 +45,7 @@ const Index = () => {
         case 'dashboard':
           return <Dashboard onTabChange={setActiveTab} />;
         case 'upload':
-          return <UploadInterface onTabChange={setActiveTab} />;
+          return <BulkGradingInterface onTabChange={setActiveTab} />;
         case 'assignments':
           return <AssignmentsPage onTabChange={setActiveTab} />;
         case 'settings':

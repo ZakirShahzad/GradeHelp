@@ -30,7 +30,7 @@ export const Navigation: React.FC<NavigationProps> = ({
 
   const navItems = [
     { id: 'dashboard', label: 'Dashboard', icon: Home },
-    { id: 'upload', label: 'Upload', icon: Upload },
+    { id: 'upload', label: 'Grade', icon: Upload },
     { id: 'assignments', label: 'Assignments', icon: FileText, badge: '3' },
     { id: 'settings', label: 'Settings', icon: Settings }
   ];
