@@ -4,76 +4,51 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { Skeleton } from '@/components/ui/skeleton';
-import { 
-  BookOpen, 
-  Clock, 
-  TrendingUp, 
-  Award,
-  Upload,
-  FileText,
-  CheckCircle,
-  AlertCircle,
-  Users,
-  Brain,
-  Loader2
-} from 'lucide-react';
+import { BookOpen, Clock, TrendingUp, Award, Upload, FileText, CheckCircle, AlertCircle, Users, Brain, Loader2 } from 'lucide-react';
 import { useProfile } from '@/hooks/useProfile';
 import { useDashboardStats } from '@/hooks/useDashboardStats';
 import { useRecentAssignments } from '@/hooks/useRecentAssignments';
-
 interface DashboardProps {
   onTabChange?: (tab: string) => void;
 }
-
-export const Dashboard: React.FC<DashboardProps> = ({ onTabChange }) => {
-  const { profile, loading: profileLoading } = useProfile();
-  const { stats, loading: statsLoading } = useDashboardStats();
-  const { assignments, loading: assignmentsLoading } = useRecentAssignments(3);
-
+export const Dashboard: React.FC<DashboardProps> = ({
+  onTabChange
+}) => {
+  const {
+    profile,
+    loading: profileLoading
+  } = useProfile();
+  const {
+    stats,
+    loading: statsLoading
+  } = useDashboardStats();
+  const {
+    assignments,
+    loading: assignmentsLoading
+  } = useRecentAssignments(3);
   const teacherName = profile?.display_name || 'Teacher';
-
-  return (
-    <div className="min-h-screen bg-surface">
+  return <div className="min-h-screen bg-surface">
       {/* Header */}
       <header className="bg-surface-elevated/95 border-b border-border backdrop-blur-md">
         <div className="max-w-7xl mx-auto px-6 lg:px-8 py-6">
           <div className="flex items-center justify-between">
             <div className="space-y-1">
-              {profileLoading ? (
-                <div className="space-y-2">
+              {profileLoading ? <div className="space-y-2">
                   <Skeleton className="h-8 w-64" />
                   <Skeleton className="h-5 w-80" />
-                </div>
-              ) : (
-                <>
+                </div> : <>
                   <h1 className="text-3xl font-bold text-foreground tracking-tight">
                     Welcome back, {teacherName}
                   </h1>
                   <p className="text-lg text-muted-foreground">
-                    {profile?.school_name ? (
-                      <>Teaching at {profile.school_name} • Your AI grading assistant is ready</>
-                    ) : (
-                      'Your AI grading assistant is ready to help'
-                    )}
+                    {profile?.school_name ? <>Teaching at {profile.school_name} • Your AI grading assistant is ready</> : 'Your AI grading assistant is ready to help'}
                   </p>
-                  {profile?.subjects && profile.subjects.length > 0 && (
-                    <div className="flex flex-wrap gap-2 pt-2">
-                      {profile.subjects.map((subject) => (
-                        <Badge key={subject} variant="secondary" className="text-xs">
-                          {subject}
-                        </Badge>
-                      ))}
-                    </div>
-                  )}
-                </>
-              )}
+                  {profile?.subjects && profile.subjects.length > 0 && <div className="flex flex-wrap gap-2 pt-2">
+                      {profile.subjects.map(subject => {})}
+                    </div>}
+                </>}
             </div>
-            <Button 
-              variant="premium" 
-              size="lg" 
-              className="shadow-lg hover:shadow-xl"
-              onClick={() => onTabChange?.('upload')}
-            >
+            <Button variant="premium" size="lg" className="shadow-lg hover:shadow-xl" onClick={() => onTabChange?.('upload')}>
               <Upload className="mr-2 h-4 w-4" />
               Upload Assignment
             </Button>
@@ -93,11 +68,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ onTabChange }) => {
                 </div>
                 <div className="ml-6">
                   <p className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">Assignments Graded</p>
-                  {statsLoading ? (
-                    <Skeleton className="h-10 w-16 mt-1" />
-                  ) : (
-                    <p className="text-4xl font-bold text-foreground mt-1">{stats?.assignmentsGraded || 0}</p>
-                  )}
+                  {statsLoading ? <Skeleton className="h-10 w-16 mt-1" /> : <p className="text-4xl font-bold text-foreground mt-1">{stats?.assignmentsGraded || 0}</p>}
                 </div>
               </div>
             </CardContent>
@@ -112,11 +83,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ onTabChange }) => {
                 </div>
                 <div className="ml-6">
                   <p className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">Hours Saved</p>
-                  {statsLoading ? (
-                    <Skeleton className="h-10 w-16 mt-1" />
-                  ) : (
-                    <p className="text-4xl font-bold text-foreground mt-1">{stats?.hoursEstimated || 0}</p>
-                  )}
+                  {statsLoading ? <Skeleton className="h-10 w-16 mt-1" /> : <p className="text-4xl font-bold text-foreground mt-1">{stats?.hoursEstimated || 0}</p>}
                 </div>
               </div>
             </CardContent>
@@ -131,13 +98,9 @@ export const Dashboard: React.FC<DashboardProps> = ({ onTabChange }) => {
                 </div>
                 <div className="ml-6">
                   <p className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">Avg Score</p>
-                  {statsLoading ? (
-                    <Skeleton className="h-10 w-16 mt-1" />
-                  ) : (
-                    <p className="text-4xl font-bold text-foreground mt-1">
+                  {statsLoading ? <Skeleton className="h-10 w-16 mt-1" /> : <p className="text-4xl font-bold text-foreground mt-1">
                       {stats?.averageScore ? `${stats.averageScore}%` : '--'}
-                    </p>
-                  )}
+                    </p>}
                 </div>
               </div>
             </CardContent>
@@ -152,11 +115,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ onTabChange }) => {
                 </div>
                 <div className="ml-6">
                   <p className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">Total Students</p>
-                  {statsLoading ? (
-                    <Skeleton className="h-10 w-16 mt-1" />
-                  ) : (
-                    <p className="text-4xl font-bold text-foreground mt-1">{stats?.totalStudents || 0}</p>
-                  )}
+                  {statsLoading ? <Skeleton className="h-10 w-16 mt-1" /> : <p className="text-4xl font-bold text-foreground mt-1">{stats?.totalStudents || 0}</p>}
                 </div>
               </div>
             </CardContent>
@@ -174,10 +133,8 @@ export const Dashboard: React.FC<DashboardProps> = ({ onTabChange }) => {
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                {assignmentsLoading ? (
-                  <div className="space-y-4">
-                    {[1, 2, 3].map((i) => (
-                      <div key={i} className="flex items-center justify-between p-4 bg-surface rounded-lg border border-border">
+                {assignmentsLoading ? <div className="space-y-4">
+                    {[1, 2, 3].map(i => <div key={i} className="flex items-center justify-between p-4 bg-surface rounded-lg border border-border">
                         <div className="flex items-center space-x-3">
                           <Skeleton className="h-5 w-5 rounded-full" />
                           <div className="space-y-2">
@@ -189,82 +146,47 @@ export const Dashboard: React.FC<DashboardProps> = ({ onTabChange }) => {
                           <Skeleton className="h-6 w-16" />
                           <Skeleton className="h-6 w-20" />
                         </div>
-                      </div>
-                    ))}
-                  </div>
-                ) : assignments.length === 0 ? (
-                  <div className="text-center py-8">
+                      </div>)}
+                  </div> : assignments.length === 0 ? <div className="text-center py-8">
                     <FileText className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
                     <p className="text-lg font-medium text-foreground mb-2">No assignments yet</p>
                     <p className="text-muted-foreground mb-4">
                       Create your first assignment to get started with AI-powered grading
                     </p>
-                    <Button 
-                      variant="outline"
-                      onClick={() => onTabChange?.('upload')}
-                    >
+                    <Button variant="outline" onClick={() => onTabChange?.('upload')}>
                       <Upload className="mr-2 h-4 w-4" />
                       Upload Assignment
                     </Button>
-                  </div>
-                ) : (
-                  <div className="space-y-4">
-                    {assignments.map((assignment) => (
-                      <div 
-                        key={assignment.id}
-                        className="flex items-center justify-between p-4 bg-surface rounded-lg border border-border hover:shadow-md transition-shadow cursor-pointer"
-                      >
+                  </div> : <div className="space-y-4">
+                    {assignments.map(assignment => <div key={assignment.id} className="flex items-center justify-between p-4 bg-surface rounded-lg border border-border hover:shadow-md transition-shadow cursor-pointer">
                         <div className="flex items-center">
                           <div className="mr-3">
-                            {assignment.status === 'completed' ? (
-                              <CheckCircle className="h-5 w-5 text-success" />
-                            ) : assignment.status === 'active' ? (
-                              <Clock className="h-5 w-5 text-warning" />
-                            ) : (
-                              <AlertCircle className="h-5 w-5 text-muted-foreground" />
-                            )}
+                            {assignment.status === 'completed' ? <CheckCircle className="h-5 w-5 text-success" /> : assignment.status === 'active' ? <Clock className="h-5 w-5 text-warning" /> : <AlertCircle className="h-5 w-5 text-muted-foreground" />}
                           </div>
                           <div>
                             <h4 className="font-medium text-foreground">{assignment.title}</h4>
                             <p className="text-sm text-muted-foreground">
                               {assignment.gradedSubmissions}/{assignment.totalSubmissions} graded
-                              {assignment.due_date && (
-                                <span className="ml-2">
+                              {assignment.due_date && <span className="ml-2">
                                   • Due {new Date(assignment.due_date).toLocaleDateString()}
-                                </span>
-                              )}
+                                </span>}
                             </p>
                           </div>
                         </div>
                         <div className="flex items-center space-x-2">
-                          {assignment.total_points && (
-                            <Badge variant="secondary">{assignment.total_points} pts</Badge>
-                          )}
-                          <Badge 
-                            variant={
-                              assignment.status === 'completed' ? 'default' : 
-                              assignment.status === 'active' ? 'secondary' : 'outline'
-                            }
-                          >
+                          {assignment.total_points && <Badge variant="secondary">{assignment.total_points} pts</Badge>}
+                          <Badge variant={assignment.status === 'completed' ? 'default' : assignment.status === 'active' ? 'secondary' : 'outline'}>
                             {assignment.status}
                           </Badge>
                         </div>
-                      </div>
-                    ))}
+                      </div>)}
                     
-                    {assignments.length >= 3 && (
-                      <div className="pt-4 border-t border-border">
-                        <Button 
-                          variant="ghost" 
-                          className="w-full"
-                          onClick={() => onTabChange?.('assignments')}
-                        >
+                    {assignments.length >= 3 && <div className="pt-4 border-t border-border">
+                        <Button variant="ghost" className="w-full" onClick={() => onTabChange?.('assignments')}>
                           View All Assignments
                         </Button>
-                      </div>
-                    )}
-                  </div>
-                )}
+                      </div>}
+                  </div>}
               </CardContent>
             </Card>
           </div>
@@ -310,8 +232,6 @@ export const Dashboard: React.FC<DashboardProps> = ({ onTabChange }) => {
           </div>
         </div>
       </div>
-    </div>
-  );
+    </div>;
 };
-
 export default Dashboard;
