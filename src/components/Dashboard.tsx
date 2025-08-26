@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
+import { Skeleton } from '@/components/ui/skeleton';
 import { 
   BookOpen, 
   Clock, 
@@ -13,28 +14,19 @@ import {
   CheckCircle,
   AlertCircle,
   Users,
-  Brain
+  Brain,
+  Loader2
 } from 'lucide-react';
+import { useProfile } from '@/hooks/useProfile';
+import { useDashboardStats } from '@/hooks/useDashboardStats';
+import { useRecentAssignments } from '@/hooks/useRecentAssignments';
 
-interface DashboardProps {
-  teacherName?: string;
-}
+export const Dashboard: React.FC = () => {
+  const { profile, loading: profileLoading } = useProfile();
+  const { stats, loading: statsLoading } = useDashboardStats();
+  const { assignments, loading: assignmentsLoading } = useRecentAssignments(3);
 
-export const Dashboard: React.FC<DashboardProps> = ({ 
-  teacherName = "Ms. Johnson" 
-}) => {
-  const stats = {
-    assignmentsGraded: 142,
-    hoursShaved: 38,
-    averageGrade: 87.2,
-    studentsHelped: 156
-  };
-
-  const recentAssignments = [
-    { id: 1, title: "Essay: American Revolution", status: "completed", grade: "A-", students: 28 },
-    { id: 2, title: "Math Quiz: Quadratic Equations", status: "in-progress", students: 32 },
-    { id: 3, title: "Science Lab Report", status: "pending", students: 25 },
-  ];
+  const teacherName = profile?.display_name || 'Teacher';
 
   return (
     <div className="min-h-screen bg-surface">
@@ -43,12 +35,34 @@ export const Dashboard: React.FC<DashboardProps> = ({
         <div className="max-w-7xl mx-auto px-6 lg:px-8 py-6">
           <div className="flex items-center justify-between">
             <div className="space-y-1">
-              <h1 className="text-3xl font-bold text-foreground tracking-tight">
-                Welcome back, {teacherName}
-              </h1>
-              <p className="text-lg text-muted-foreground">
-                Your AI grading assistant is ready to help
-              </p>
+              {profileLoading ? (
+                <div className="space-y-2">
+                  <Skeleton className="h-8 w-64" />
+                  <Skeleton className="h-5 w-80" />
+                </div>
+              ) : (
+                <>
+                  <h1 className="text-3xl font-bold text-foreground tracking-tight">
+                    Welcome back, {teacherName}
+                  </h1>
+                  <p className="text-lg text-muted-foreground">
+                    {profile?.school_name ? (
+                      <>Teaching at {profile.school_name} • Your AI grading assistant is ready</>
+                    ) : (
+                      'Your AI grading assistant is ready to help'
+                    )}
+                  </p>
+                  {profile?.subjects && profile.subjects.length > 0 && (
+                    <div className="flex flex-wrap gap-2 pt-2">
+                      {profile.subjects.map((subject) => (
+                        <Badge key={subject} variant="secondary" className="text-xs">
+                          {subject}
+                        </Badge>
+                      ))}
+                    </div>
+                  )}
+                </>
+              )}
             </div>
             <Button variant="premium" size="lg" className="shadow-lg hover:shadow-xl">
               <Upload className="mr-2 h-4 w-4" />
@@ -61,6 +75,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
       <div className="max-w-7xl mx-auto px-6 lg:px-8 py-8 animate-fade-in-up">
         {/* Stats Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+          {/* Assignments Graded */}
           <Card className="card-elevated hover:shadow-xl transition-all duration-300 group">
             <CardContent className="p-8">
               <div className="flex items-center">
@@ -69,12 +84,17 @@ export const Dashboard: React.FC<DashboardProps> = ({
                 </div>
                 <div className="ml-6">
                   <p className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">Assignments Graded</p>
-                  <p className="text-4xl font-bold text-foreground mt-1">{stats.assignmentsGraded}</p>
+                  {statsLoading ? (
+                    <Skeleton className="h-10 w-16 mt-1" />
+                  ) : (
+                    <p className="text-4xl font-bold text-foreground mt-1">{stats?.assignmentsGraded || 0}</p>
+                  )}
                 </div>
               </div>
             </CardContent>
           </Card>
 
+          {/* Hours Saved */}
           <Card className="card-elevated hover:shadow-xl transition-all duration-300 group">
             <CardContent className="p-8">
               <div className="flex items-center">
@@ -83,12 +103,17 @@ export const Dashboard: React.FC<DashboardProps> = ({
                 </div>
                 <div className="ml-6">
                   <p className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">Hours Saved</p>
-                  <p className="text-4xl font-bold text-foreground mt-1">{stats.hoursShaved}</p>
+                  {statsLoading ? (
+                    <Skeleton className="h-10 w-16 mt-1" />
+                  ) : (
+                    <p className="text-4xl font-bold text-foreground mt-1">{stats?.hoursEstimated || 0}</p>
+                  )}
                 </div>
               </div>
             </CardContent>
           </Card>
 
+          {/* Average Score */}
           <Card className="card-elevated hover:shadow-xl transition-all duration-300 group">
             <CardContent className="p-8">
               <div className="flex items-center">
@@ -96,13 +121,20 @@ export const Dashboard: React.FC<DashboardProps> = ({
                   <TrendingUp className="h-7 w-7 text-warning" />
                 </div>
                 <div className="ml-6">
-                  <p className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">Avg Grade</p>
-                  <p className="text-4xl font-bold text-foreground mt-1">{stats.averageGrade}%</p>
+                  <p className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">Avg Score</p>
+                  {statsLoading ? (
+                    <Skeleton className="h-10 w-16 mt-1" />
+                  ) : (
+                    <p className="text-4xl font-bold text-foreground mt-1">
+                      {stats?.averageScore ? `${stats.averageScore}%` : '--'}
+                    </p>
+                  )}
                 </div>
               </div>
             </CardContent>
           </Card>
 
+          {/* Total Students */}
           <Card className="card-elevated hover:shadow-xl transition-all duration-300 group">
             <CardContent className="p-8">
               <div className="flex items-center">
@@ -110,8 +142,12 @@ export const Dashboard: React.FC<DashboardProps> = ({
                   <Users className="h-7 w-7 text-primary" />
                 </div>
                 <div className="ml-6">
-                  <p className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">Students Helped</p>
-                  <p className="text-4xl font-bold text-foreground mt-1">{stats.studentsHelped}</p>
+                  <p className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">Total Students</p>
+                  {statsLoading ? (
+                    <Skeleton className="h-10 w-16 mt-1" />
+                  ) : (
+                    <p className="text-4xl font-bold text-foreground mt-1">{stats?.totalStudents || 0}</p>
+                  )}
                 </div>
               </div>
             </CardContent>
@@ -129,43 +165,90 @@ export const Dashboard: React.FC<DashboardProps> = ({
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="space-y-4">
-                  {recentAssignments.map((assignment) => (
-                    <div 
-                      key={assignment.id}
-                      className="flex items-center justify-between p-4 bg-surface rounded-lg border border-border hover:shadow-md transition-shadow"
-                    >
-                      <div className="flex items-center">
-                        <div className="mr-3">
-                          {assignment.status === 'completed' ? (
-                            <CheckCircle className="h-5 w-5 text-success" />
-                          ) : assignment.status === 'in-progress' ? (
-                            <Clock className="h-5 w-5 text-warning" />
-                          ) : (
-                            <AlertCircle className="h-5 w-5 text-muted-foreground" />
+                {assignmentsLoading ? (
+                  <div className="space-y-4">
+                    {[1, 2, 3].map((i) => (
+                      <div key={i} className="flex items-center justify-between p-4 bg-surface rounded-lg border border-border">
+                        <div className="flex items-center space-x-3">
+                          <Skeleton className="h-5 w-5 rounded-full" />
+                          <div className="space-y-2">
+                            <Skeleton className="h-4 w-48" />
+                            <Skeleton className="h-3 w-24" />
+                          </div>
+                        </div>
+                        <div className="flex space-x-2">
+                          <Skeleton className="h-6 w-16" />
+                          <Skeleton className="h-6 w-20" />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : assignments.length === 0 ? (
+                  <div className="text-center py-8">
+                    <FileText className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+                    <p className="text-lg font-medium text-foreground mb-2">No assignments yet</p>
+                    <p className="text-muted-foreground mb-4">
+                      Create your first assignment to get started with AI-powered grading
+                    </p>
+                    <Button variant="outline">
+                      <Upload className="mr-2 h-4 w-4" />
+                      Upload Assignment
+                    </Button>
+                  </div>
+                ) : (
+                  <div className="space-y-4">
+                    {assignments.map((assignment) => (
+                      <div 
+                        key={assignment.id}
+                        className="flex items-center justify-between p-4 bg-surface rounded-lg border border-border hover:shadow-md transition-shadow cursor-pointer"
+                      >
+                        <div className="flex items-center">
+                          <div className="mr-3">
+                            {assignment.status === 'completed' ? (
+                              <CheckCircle className="h-5 w-5 text-success" />
+                            ) : assignment.status === 'active' ? (
+                              <Clock className="h-5 w-5 text-warning" />
+                            ) : (
+                              <AlertCircle className="h-5 w-5 text-muted-foreground" />
+                            )}
+                          </div>
+                          <div>
+                            <h4 className="font-medium text-foreground">{assignment.title}</h4>
+                            <p className="text-sm text-muted-foreground">
+                              {assignment.gradedSubmissions}/{assignment.totalSubmissions} graded
+                              {assignment.due_date && (
+                                <span className="ml-2">
+                                  • Due {new Date(assignment.due_date).toLocaleDateString()}
+                                </span>
+                              )}
+                            </p>
+                          </div>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          {assignment.total_points && (
+                            <Badge variant="secondary">{assignment.total_points} pts</Badge>
                           )}
-                        </div>
-                        <div>
-                          <h4 className="font-medium text-foreground">{assignment.title}</h4>
-                          <p className="text-sm text-muted-foreground">{assignment.students} students</p>
+                          <Badge 
+                            variant={
+                              assignment.status === 'completed' ? 'default' : 
+                              assignment.status === 'active' ? 'secondary' : 'outline'
+                            }
+                          >
+                            {assignment.status}
+                          </Badge>
                         </div>
                       </div>
-                      <div className="flex items-center space-x-2">
-                        {assignment.grade && (
-                          <Badge variant="secondary">{assignment.grade}</Badge>
-                        )}
-                        <Badge 
-                          variant={
-                            assignment.status === 'completed' ? 'default' : 
-                            assignment.status === 'in-progress' ? 'secondary' : 'outline'
-                          }
-                        >
-                          {assignment.status}
-                        </Badge>
+                    ))}
+                    
+                    {assignments.length >= 3 && (
+                      <div className="pt-4 border-t border-border">
+                        <Button variant="ghost" className="w-full">
+                          View All Assignments
+                        </Button>
                       </div>
-                    </div>
-                  ))}
-                </div>
+                    )}
+                  </div>
+                )}
               </CardContent>
             </Card>
           </div>
