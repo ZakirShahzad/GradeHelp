@@ -14,6 +14,7 @@ const Auth = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [displayName, setDisplayName] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -55,7 +56,10 @@ const Auth = () => {
           email,
           password,
           options: {
-            emailRedirectTo: redirectUrl
+            emailRedirectTo: redirectUrl,
+            data: {
+              display_name: displayName.trim()
+            }
           }
         });
         
@@ -169,6 +173,24 @@ const Auth = () => {
 
             {!isLogin && (
               <div className="space-y-2 animate-fade-in">
+                <Label htmlFor="displayName">Your Name</Label>
+                <Input
+                  id="displayName"
+                  type="text"
+                  placeholder="How should we address you? (e.g., Ms. Johnson)"
+                  value={displayName}
+                  onChange={(e) => {
+                    setDisplayName(e.target.value);
+                    setError('');
+                  }}
+                  required
+                  className="bg-surface transition-colors"
+                />
+              </div>
+            )}
+
+            {!isLogin && (
+              <div className="space-y-2 animate-fade-in">
                 <Label htmlFor="confirmPassword">Confirm Password</Label>
                 <div className="relative">
                   <Input
@@ -227,6 +249,7 @@ const Auth = () => {
                 setEmail('');
                 setPassword('');
                 setConfirmPassword('');
+                setDisplayName('');
                 setError('');
               }}
               className="mt-2 w-full transition-colors"
