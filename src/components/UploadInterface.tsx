@@ -1,10 +1,14 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
+import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/hooks/useAuth';
+import { useAssignments } from '@/hooks/useAssignments';
+import { useToast } from '@/hooks/use-toast';
 import { 
   Upload, 
   FileText, 
@@ -13,7 +17,8 @@ import {
   AlertCircle,
   BookOpen,
   Users,
-  Clock
+  Clock,
+  Calendar
 } from 'lucide-react';
 
 interface UploadedFile {
@@ -21,14 +26,27 @@ interface UploadedFile {
   name: string;
   size: number;
   type: string;
+  file: File;
   status: 'uploading' | 'complete' | 'error';
+  uploadPath?: string;
 }
 
-export const UploadInterface: React.FC = () => {
+interface UploadInterfaceProps {
+  onTabChange?: (tab: string) => void;
+}
+
+export const UploadInterface: React.FC<UploadInterfaceProps> = ({ onTabChange }) => {
   const [files, setFiles] = useState<UploadedFile[]>([]);
   const [isDragging, setIsDragging] = useState(false);
   const [assignmentTitle, setAssignmentTitle] = useState('');
   const [rubricNotes, setRubricNotes] = useState('');
+  const [dueDate, setDueDate] = useState('');
+  const [totalPoints, setTotalPoints] = useState(100);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const { user } = useAuth();
+  const { createAssignment } = useAssignments();
+  const { toast } = useToast();
 
   const handleDragOver = useCallback((e: React.DragEvent) => {
     e.preventDefault();
@@ -40,34 +58,98 @@ export const UploadInterface: React.FC = () => {
     setIsDragging(false);
   }, []);
 
-  const handleDrop = useCallback((e: React.DragEvent) => {
-    e.preventDefault();
-    setIsDragging(false);
-    
-    const droppedFiles = Array.from(e.dataTransfer.files);
-    const newFiles: UploadedFile[] = droppedFiles.map(file => ({
+  const uploadFileToSupabase = async (file: File, fileId: string) => {
+    if (!user) throw new Error('User not authenticated');
+
+    const fileExt = file.name.split('.').pop();
+    const fileName = `${user.id}/${Date.now()}-${Math.random().toString(36).substr(2, 9)}.${fileExt}`;
+
+    const { data, error } = await supabase.storage
+      .from('assignments')
+      .upload(fileName, file);
+
+    if (error) throw error;
+
+    return data.path;
+  };
+
+  const handleFileSelection = (selectedFiles: FileList) => {
+    const validFiles = Array.from(selectedFiles).filter(file => {
+      const validTypes = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'text/plain'];
+      const maxSize = 10 * 1024 * 1024; // 10MB
+      
+      if (!validTypes.includes(file.type) && !file.name.match(/\.(pdf|doc|docx|txt)$/i)) {
+        toast({
+          title: "Invalid file type",
+          description: `${file.name} is not a supported file type.`,
+          variant: "destructive",
+        });
+        return false;
+      }
+      
+      if (file.size > maxSize) {
+        toast({
+          title: "File too large",
+          description: `${file.name} is larger than 10MB.`,
+          variant: "destructive",
+        });
+        return false;
+      }
+      
+      return true;
+    });
+
+    const newFiles: UploadedFile[] = validFiles.map(file => ({
       id: Math.random().toString(36).substr(2, 9),
       name: file.name,
       size: file.size,
       type: file.type,
+      file,
       status: 'uploading'
     }));
 
     setFiles(prev => [...prev, ...newFiles]);
 
-    // Simulate upload process
-    newFiles.forEach(file => {
-      setTimeout(() => {
+    // Upload files to Supabase
+    newFiles.forEach(async (fileInfo) => {
+      try {
+        const uploadPath = await uploadFileToSupabase(fileInfo.file, fileInfo.id);
         setFiles(prev => 
           prev.map(f => 
-            f.id === file.id 
-              ? { ...f, status: Math.random() > 0.1 ? 'complete' : 'error' }
+            f.id === fileInfo.id 
+              ? { ...f, status: 'complete', uploadPath }
               : f
           )
         );
-      }, 1000 + Math.random() * 2000);
+      } catch (error) {
+        console.error('Upload error:', error);
+        setFiles(prev => 
+          prev.map(f => 
+            f.id === fileInfo.id 
+              ? { ...f, status: 'error' }
+              : f
+          )
+        );
+        toast({
+          title: "Upload failed",
+          description: `Failed to upload ${fileInfo.name}`,
+          variant: "destructive",
+        });
+      }
     });
+  };
+
+  const handleDrop = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(false);
+    handleFileSelection(e.dataTransfer.files);
   }, []);
+
+  const handleFileInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      handleFileSelection(e.target.files);
+    }
+  };
 
   const removeFile = (fileId: string) => {
     setFiles(prev => prev.filter(f => f.id !== fileId));
@@ -79,6 +161,51 @@ export const UploadInterface: React.FC = () => {
     const sizes = ['Bytes', 'KB', 'MB', 'GB'];
     const i = Math.floor(Math.log(bytes) / Math.log(k));
     return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+  };
+
+  const handleCreateAssignment = async () => {
+    if (!assignmentTitle.trim()) {
+      toast({
+        title: "Missing title",
+        description: "Please enter an assignment title.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    const completedFiles = files.filter(f => f.status === 'complete');
+    if (completedFiles.length === 0) {
+      toast({
+        title: "No files uploaded",
+        description: "Please upload at least one file before creating the assignment.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setIsSubmitting(true);
+    try {
+      await createAssignment({
+        title: assignmentTitle,
+        description: rubricNotes || undefined,
+        due_date: dueDate || undefined,
+        total_points: totalPoints,
+      });
+
+      // Reset form
+      setAssignmentTitle('');
+      setRubricNotes('');
+      setDueDate('');
+      setTotalPoints(100);
+      setFiles([]);
+
+      // Navigate to assignments page
+      onTabChange?.('assignments');
+    } catch (error) {
+      console.error('Error creating assignment:', error);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const completedFiles = files.filter(f => f.status === 'complete').length;
@@ -117,6 +244,30 @@ export const UploadInterface: React.FC = () => {
                   placeholder="e.g., Essay: American Revolution Analysis"
                   className="mt-1"
                 />
+              </div>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="dueDate">Due Date (Optional)</Label>
+                  <Input
+                    id="dueDate"
+                    type="datetime-local"
+                    value={dueDate}
+                    onChange={(e) => setDueDate(e.target.value)}
+                    className="mt-1"
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="points">Total Points</Label>
+                  <Input
+                    id="points"
+                    type="number"
+                    min="1"
+                    value={totalPoints}
+                    onChange={(e) => setTotalPoints(parseInt(e.target.value) || 100)}
+                    className="mt-1"
+                  />
+                </div>
               </div>
               
               <div>
@@ -166,9 +317,21 @@ export const UploadInterface: React.FC = () => {
                     </p>
                   </div>
 
-                  <Button variant="outline" className="mt-4">
+                  <Button 
+                    variant="outline" 
+                    className="mt-4"
+                    onClick={() => fileInputRef.current?.click()}
+                  >
                     Choose Files
                   </Button>
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    multiple
+                    accept=".pdf,.doc,.docx,.txt"
+                    onChange={handleFileInputChange}
+                    className="hidden"
+                  />
                 </div>
               </div>
 
@@ -231,21 +394,31 @@ export const UploadInterface: React.FC = () => {
 
           {/* Action Buttons */}
           <div className="flex items-center justify-between">
-            <Button variant="outline">
-              Save as Draft
+            <Button 
+              variant="outline"
+              onClick={() => onTabChange?.('assignments')}
+            >
+              Cancel
             </Button>
             
             <div className="space-x-3">
-              <Button variant="outline">
-                Cancel
-              </Button>
               <Button 
                 variant="default" 
                 className="gradient-primary"
-                disabled={completedFiles === 0 || !assignmentTitle.trim()}
+                disabled={completedFiles === 0 || !assignmentTitle.trim() || isSubmitting}
+                onClick={handleCreateAssignment}
               >
-                <Users className="mr-2 h-4 w-4" />
-                Start Grading ({completedFiles} files)
+                {isSubmitting ? (
+                  <>
+                    <div className="mr-2 h-4 w-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                    Creating...
+                  </>
+                ) : (
+                  <>
+                    <BookOpen className="mr-2 h-4 w-4" />
+                    Create Assignment ({completedFiles} files)
+                  </>
+                )}
               </Button>
             </div>
           </div>
