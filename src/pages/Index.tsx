@@ -4,9 +4,9 @@ import Navigation from '@/components/Navigation';
 import Dashboard from '@/components/Dashboard';
 import UploadInterface from '@/components/UploadInterface';
 import AssignmentsPage from '@/components/AssignmentsPage';
+import SettingsPage from '@/components/SettingsPage';
 import Landing from '@/pages/Landing';
 import { useAuth } from '@/hooks/useAuth';
-import { Settings } from 'lucide-react';
 
 const Index = () => {
   const [activeTab, setActiveTab] = useState('dashboard');
@@ -48,19 +48,7 @@ const Index = () => {
         case 'assignments':
           return <AssignmentsPage onTabChange={setActiveTab} />;
         case 'settings':
-          return (
-            <div className="min-h-screen bg-surface flex items-center justify-center">
-              <div className="text-center space-y-4 animate-fade-in-up">
-                <div className="p-4 bg-primary-light rounded-full w-20 h-20 mx-auto flex items-center justify-center">
-                  <Settings className="h-10 w-10 text-primary" />
-                </div>
-                <h2 className="text-3xl font-bold text-foreground">Grading Settings</h2>
-                <p className="text-muted-foreground text-lg max-w-md mx-auto">
-                  Customize AI behavior, rubric preferences, and teaching style adaptation...
-                </p>
-              </div>
-            </div>
-          );
+          return <SettingsPage onTabChange={setActiveTab} />;
         default:
           return <Dashboard />;
       }
