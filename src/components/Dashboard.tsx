@@ -44,7 +44,9 @@ export const Dashboard: React.FC<DashboardProps> = ({
                     {profile?.school_name ? <>Teaching at {profile.school_name} • Your AI grading assistant is ready</> : 'Your AI grading assistant is ready to help'}
                   </p>
                   {profile?.subjects && profile.subjects.length > 0 && <div className="flex flex-wrap gap-2 pt-2">
-                      {profile.subjects.map(subject => {})}
+                      {profile.subjects.map((subject, index) => (
+                        <Badge key={index} variant="secondary">{subject}</Badge>
+                      ))}
                     </div>}
                 </>}
             </div>
