@@ -5,7 +5,8 @@ import { useAuth } from '@/hooks/useAuth';
 import { 
   Brain, 
   Home, 
-  Upload, 
+  Plus,
+  BookOpen, 
   FileText, 
   Settings, 
   HelpCircle,
@@ -30,7 +31,8 @@ export const Navigation: React.FC<NavigationProps> = ({
 
   const navItems = [
     { id: 'dashboard', label: 'Dashboard', icon: Home },
-    { id: 'upload', label: 'Grade', icon: Upload },
+    { id: 'create', label: 'Create', icon: Plus },
+    { id: 'grade', label: 'Grade', icon: BookOpen },
     { id: 'assignments', label: 'Assignments', icon: FileText, badge: '3' },
     { id: 'settings', label: 'Settings', icon: Settings }
   ];

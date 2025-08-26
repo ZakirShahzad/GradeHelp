@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Navigation from '@/components/Navigation';
 import Dashboard from '@/components/Dashboard';
-import UploadInterface from '@/components/UploadInterface';
+import CreateAssignmentPage from '@/components/CreateAssignmentPage';
 import AssignmentsPage from '@/components/AssignmentsPage';
 import BulkGradingInterface from '@/components/BulkGradingInterface';
 import SettingsPage from '@/components/SettingsPage';
@@ -44,7 +44,9 @@ const Index = () => {
       switch (activeTab) {
         case 'dashboard':
           return <Dashboard onTabChange={setActiveTab} />;
-        case 'upload':
+        case 'create':
+          return <CreateAssignmentPage onTabChange={setActiveTab} />;
+        case 'grade':
           return <BulkGradingInterface onTabChange={setActiveTab} />;
         case 'assignments':
           return <AssignmentsPage onTabChange={setActiveTab} />;

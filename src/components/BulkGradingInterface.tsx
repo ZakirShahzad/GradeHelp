@@ -226,7 +226,7 @@ export const BulkGradingInterface: React.FC<BulkGradingInterfaceProps> = ({ onTa
                 <Label>Quick Actions</Label>
                 <Button 
                   variant="outline" 
-                  onClick={() => onTabChange?.('upload')}
+                  onClick={() => onTabChange?.('create')}
                   className="w-full"
                 >
                   Create New Assignment
