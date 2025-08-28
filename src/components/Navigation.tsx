@@ -11,8 +11,17 @@ import {
   Settings, 
   HelpCircle,
   User,
-  LogOut
+  LogOut,
+  ChevronDown
 } from 'lucide-react';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 
 interface NavigationProps {
   activeTab?: string;
@@ -96,21 +105,32 @@ export const Navigation: React.FC<NavigationProps> = ({
                 <p className="text-sm font-semibold text-foreground">Teacher</p>
                 <p className="text-xs text-muted-foreground">GradeHelp User</p>
               </div>
-              <div className="relative">
-                <Button variant="ghost" size="icon" className="rounded-full w-9 h-9 bg-gradient-to-br from-primary/10 to-primary/5 hover:from-primary/20 hover:to-primary/10 border border-primary/20">
-                  <User className="h-4 w-4 text-primary" />
-                </Button>
-                <div className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 bg-success rounded-full border border-surface-elevated"></div>
-              </div>
-              <Button 
-                variant="ghost" 
-                size="icon" 
-                className="w-9 h-9 text-muted-foreground hover:text-destructive"
-                onClick={handleLogout}
-                title="Sign Out"
-              >
-                <LogOut className="h-4 w-4" />
-              </Button>
+              
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" size="icon" className="relative rounded-full w-9 h-9 bg-gradient-to-br from-primary/10 to-primary/5 hover:from-primary/20 hover:to-primary/10 border border-primary/20">
+                    <User className="h-4 w-4 text-primary" />
+                    <div className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 bg-success rounded-full border border-surface-elevated"></div>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-56">
+                  <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={() => onTabChange('settings')}>
+                    <Settings className="mr-2 h-4 w-4" />
+                    <span>Profile Settings</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem>
+                    <HelpCircle className="mr-2 h-4 w-4" />
+                    <span>Help & Support</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={handleLogout} className="text-destructive focus:text-destructive">
+                    <LogOut className="mr-2 h-4 w-4" />
+                    <span>Sign Out</span>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             </div>
           </div>
         </div>
