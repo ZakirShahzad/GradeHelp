@@ -42,8 +42,7 @@ export const Navigation: React.FC<NavigationProps> = ({
     { id: 'dashboard', label: 'Dashboard', icon: Home },
     { id: 'create', label: 'Create', icon: Plus },
     { id: 'grade', label: 'Grade', icon: BookOpen },
-    { id: 'assignments', label: 'Assignments', icon: FileText, badge: '3' },
-    { id: 'settings', label: 'Settings', icon: Settings }
+    { id: 'assignments', label: 'Assignments', icon: FileText, badge: '3' }
   ];
 
   return (
