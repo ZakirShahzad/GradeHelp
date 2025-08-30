@@ -146,6 +146,24 @@ const Auth = () => {
               />
             </div>
 
+            {!isLogin && (
+              <div className="space-y-2 animate-fade-in">
+                <Label htmlFor="displayName">Your Name</Label>
+                <Input
+                  id="displayName"
+                  type="text"
+                  placeholder="How should we address you? (e.g., Ms. Johnson)"
+                  value={displayName}
+                  onChange={(e) => {
+                    setDisplayName(e.target.value);
+                    setError('');
+                  }}
+                  required
+                  className="bg-surface transition-colors"
+                />
+              </div>
+            )}
+
             <div className="space-y-2">
               <Label htmlFor="password">Password</Label>
               <div className="relative">
@@ -170,24 +188,6 @@ const Auth = () => {
                 </button>
               </div>
             </div>
-
-            {!isLogin && (
-              <div className="space-y-2 animate-fade-in">
-                <Label htmlFor="displayName">Your Name</Label>
-                <Input
-                  id="displayName"
-                  type="text"
-                  placeholder="How should we address you? (e.g., Ms. Johnson)"
-                  value={displayName}
-                  onChange={(e) => {
-                    setDisplayName(e.target.value);
-                    setError('');
-                  }}
-                  required
-                  className="bg-surface transition-colors"
-                />
-              </div>
-            )}
 
             {!isLogin && (
               <div className="space-y-2 animate-fade-in">
