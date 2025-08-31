@@ -45,7 +45,7 @@ const Landing = ({ onLogin }: LandingProps) => {
               Log In
             </Button>
             <Button asChild>
-              <Link to="/auth">Sign Up</Link>
+              <Link to="/signup">Sign Up</Link>
             </Button>
           </div>
         </nav>
@@ -179,7 +179,7 @@ const Landing = ({ onLogin }: LandingProps) => {
             Log In
           </Button>
           <Button asChild className="flex-1">
-            <Link to="/auth">Sign Up</Link>
+            <Link to="/signup">Sign Up</Link>
           </Button>
         </div>
       </div>

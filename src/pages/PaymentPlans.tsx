@@ -75,10 +75,10 @@ const PaymentPlans = () => {
           </Link>
           <div className="flex items-center space-x-4">
             <Button variant="outline" asChild>
-              <Link to="/auth">Log In</Link>
+              <Link to="/signin">Log In</Link>
             </Button>
             <Button asChild>
-              <Link to="/auth">Sign Up</Link>
+              <Link to="/signup">Sign Up</Link>
             </Button>
           </div>
         </nav>
@@ -143,7 +143,7 @@ const PaymentPlans = () => {
                 size="lg"
                 asChild
               >
-                <Link to="/auth">{plan.buttonText}</Link>
+                <Link to="/signup">{plan.buttonText}</Link>
               </Button>
             </Card>
           ))}
