@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { GraduationCap, FileText, Brain, Clock, TrendingUp, CheckCircle } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 interface LandingProps {
   onLogin: () => void;
@@ -43,8 +44,8 @@ const Landing = ({ onLogin }: LandingProps) => {
             <Button variant="outline" onClick={onLogin}>
               Log In
             </Button>
-            <Button onClick={onLogin}>
-              Sign Up Free
+            <Button asChild>
+              <Link to="/auth">Sign Up</Link>
             </Button>
           </div>
         </nav>
@@ -177,8 +178,8 @@ const Landing = ({ onLogin }: LandingProps) => {
           <Button variant="outline" onClick={onLogin} className="flex-1">
             Log In
           </Button>
-          <Button onClick={onLogin} className="flex-1">
-            Sign Up
+          <Button asChild className="flex-1">
+            <Link to="/auth">Sign Up</Link>
           </Button>
         </div>
       </div>
