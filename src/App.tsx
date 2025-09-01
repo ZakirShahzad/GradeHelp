@@ -8,6 +8,7 @@ import DashboardPage from "./pages/DashboardPage";
 import CreatePage from "./pages/CreatePage";
 import GradePage from "./pages/GradePage";
 import AssignmentsPage from "./pages/AssignmentsPage";
+import AssignmentDetailPage from "./pages/AssignmentDetailPage";
 import SettingsPage from "./pages/SettingsPage";
 import Auth from "./pages/Auth";
 import SignIn from "./pages/SignIn";
@@ -29,6 +30,7 @@ const App = () => (
           <Route path="/create" element={<CreatePage />} />
           <Route path="/grade" element={<GradePage />} />
           <Route path="/assignments" element={<AssignmentsPage />} />
+          <Route path="/assignments/:id" element={<AssignmentDetailPage />} />
           <Route path="/settings" element={<SettingsPage />} />
           <Route path="/auth" element={<Auth />} />
           <Route path="/signin" element={<SignIn />} />
