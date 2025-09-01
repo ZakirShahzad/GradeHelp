@@ -2,6 +2,7 @@ import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { useAuth } from '@/hooks/useAuth';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { 
   Brain, 
   Home, 
@@ -23,27 +24,29 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 
-interface NavigationProps {
-  activeTab?: string;
-  onTabChange?: (tab: string) => void;
-}
+interface NavigationProps {}
 
-export const Navigation: React.FC<NavigationProps> = ({ 
-  activeTab = 'dashboard',
-  onTabChange = () => {}
-}) => {
+export const Navigation: React.FC<NavigationProps> = () => {
   const { signOut } = useAuth();
+  const navigate = useNavigate();
+  const location = useLocation();
   
   const handleLogout = async () => {
     await signOut();
   };
 
   const navItems = [
-    { id: 'dashboard', label: 'Dashboard', icon: Home },
-    { id: 'create', label: 'Create', icon: Plus },
-    { id: 'grade', label: 'Grade', icon: BookOpen },
-    { id: 'assignments', label: 'Assignments', icon: FileText, badge: '3' }
+    { id: 'dashboard', label: 'Dashboard', icon: Home, path: '/dashboard' },
+    { id: 'create', label: 'Create', icon: Plus, path: '/create' },
+    { id: 'grade', label: 'Grade', icon: BookOpen, path: '/grade' },
+    { id: 'assignments', label: 'Assignments', icon: FileText, badge: '3', path: '/assignments' }
   ];
+
+  const getActiveTab = () => {
+    const currentPath = location.pathname;
+    const activeItem = navItems.find(item => item.path === currentPath);
+    return activeItem?.id || 'dashboard';
+  };
 
   return (
     <nav className="bg-surface-elevated/95 border-b border-border sticky top-0 z-50 backdrop-blur-md shadow-sm">
@@ -66,14 +69,14 @@ export const Navigation: React.FC<NavigationProps> = ({
           <div className="hidden md:flex items-center space-x-1">
             {navItems.map((item) => {
               const Icon = item.icon;
-              const isActive = activeTab === item.id;
+              const isActive = getActiveTab() === item.id;
               
               return (
                 <Button
                   key={item.id}
                   variant={isActive ? "secondary" : "ghost"}
                   className="relative px-4 py-2 font-medium transition-all duration-200 hover:scale-[1.02]"
-                  onClick={() => onTabChange(item.id)}
+                  onClick={() => navigate(item.path)}
                 >
                   <Icon className="mr-2 h-4 w-4" />
                   {item.label}
@@ -115,7 +118,7 @@ export const Navigation: React.FC<NavigationProps> = ({
                 <DropdownMenuContent align="end" className="w-56">
                   <DropdownMenuLabel>My Account</DropdownMenuLabel>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={() => onTabChange('settings')}>
+                  <DropdownMenuItem onClick={() => navigate('/settings')}>
                     <Settings className="mr-2 h-4 w-4" />
                     <span>Profile Settings</span>
                   </DropdownMenuItem>
@@ -139,7 +142,7 @@ export const Navigation: React.FC<NavigationProps> = ({
           <div className="flex space-x-1 overflow-x-auto scrollbar-hide">
             {navItems.map((item) => {
               const Icon = item.icon;
-              const isActive = activeTab === item.id;
+              const isActive = getActiveTab() === item.id;
               
               return (
                 <Button
@@ -147,7 +150,7 @@ export const Navigation: React.FC<NavigationProps> = ({
                   variant={isActive ? "secondary" : "ghost"}
                   size="sm"
                   className="flex-shrink-0 relative px-3 py-1.5"
-                  onClick={() => onTabChange(item.id)}
+                  onClick={() => navigate(item.path)}
                 >
                   <Icon className="mr-1.5 h-3 w-3" />
                   {item.label}
