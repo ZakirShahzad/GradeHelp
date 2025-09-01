@@ -50,7 +50,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
                     </div>}
                 </>}
             </div>
-            <Button variant="premium" size="lg" className="shadow-lg hover:shadow-xl" onClick={() => onTabChange?.('upload')}>
+            <Button variant="premium" size="lg" className="shadow-lg hover:shadow-xl" onClick={() => onTabChange?.('create')}>
               <Upload className="mr-2 h-4 w-4" />
               Upload Assignment
             </Button>
@@ -155,7 +155,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
                     <p className="text-muted-foreground mb-4">
                       Create your first assignment to get started with AI-powered grading
                     </p>
-                    <Button variant="outline" onClick={() => onTabChange?.('upload')}>
+                    <Button variant="outline" onClick={() => onTabChange?.('create')}>
                       <Upload className="mr-2 h-4 w-4" />
                       Upload Assignment
                     </Button>
