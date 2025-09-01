@@ -43,7 +43,18 @@ export const AssignmentsPage: React.FC<AssignmentsPageProps> = ({
   };
   return <div className="min-h-screen bg-surface">
       <header className="bg-surface-elevated/95 border-b border-border backdrop-blur-md">
-        
+        <div className="max-w-7xl mx-auto px-6 lg:px-8 py-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-2xl font-bold text-foreground">Assignments</h1>
+              <p className="text-muted-foreground">Manage your assignments and track progress</p>
+            </div>
+            <Button onClick={() => navigate('/create')}>
+              <Plus className="mr-2 h-4 w-4" />
+              New Assignment
+            </Button>
+          </div>
+        </div>
       </header>
 
       <div className="max-w-7xl mx-auto px-6 lg:px-8 py-8">
@@ -92,7 +103,7 @@ export const AssignmentsPage: React.FC<AssignmentsPageProps> = ({
             <p className="text-muted-foreground mb-6 max-w-md mx-auto">
               {searchQuery ? 'No assignments match your search criteria.' : 'Create your first assignment to get started with AI-powered grading.'}
             </p>
-            <Button variant="default" onClick={() => onTabChange?.('upload')}>
+            <Button variant="default" onClick={() => navigate('/create')}>
               <Plus className="mr-2 h-4 w-4" />
               Create Your First Assignment
             </Button>
@@ -119,7 +130,7 @@ export const AssignmentsPage: React.FC<AssignmentsPageProps> = ({
                           <Eye className="mr-2 h-4 w-4" />
                           View Details
                         </DropdownMenuItem>
-                        <DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => navigate('/create')}>
                           <Edit className="mr-2 h-4 w-4" />
                           Edit Assignment
                         </DropdownMenuItem>
