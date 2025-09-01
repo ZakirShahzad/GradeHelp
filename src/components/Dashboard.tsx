@@ -1,4 +1,5 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -14,6 +15,7 @@ interface DashboardProps {
 export const Dashboard: React.FC<DashboardProps> = ({
   onTabChange
 }) => {
+  const navigate = useNavigate();
   const {
     profile,
     loading: profileLoading
@@ -50,7 +52,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
                     </div>}
                 </>}
             </div>
-            <Button variant="premium" size="lg" className="shadow-lg hover:shadow-xl" onClick={() => onTabChange?.('create')}>
+            <Button variant="premium" size="lg" className="shadow-lg hover:shadow-xl" onClick={() => navigate('/create')}>
               <Upload className="mr-2 h-4 w-4" />
               Upload Assignment
             </Button>
@@ -155,7 +157,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
                     <p className="text-muted-foreground mb-4">
                       Create your first assignment to get started with AI-powered grading
                     </p>
-                    <Button variant="outline" onClick={() => onTabChange?.('create')}>
+                    <Button variant="outline" onClick={() => navigate('/create')}>
                       <Upload className="mr-2 h-4 w-4" />
                       Upload Assignment
                     </Button>
@@ -184,7 +186,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
                       </div>)}
                     
                     {assignments.length >= 3 && <div className="pt-4 border-t border-border">
-                        <Button variant="ghost" className="w-full" onClick={() => onTabChange?.('assignments')}>
+                        <Button variant="ghost" className="w-full" onClick={() => navigate('/assignments')}>
                           View All Assignments
                         </Button>
                       </div>}
