@@ -3,10 +3,14 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { ArrowLeft, Calendar, FileText, Users, Edit, Trash2 } from 'lucide-react';
+import { Skeleton } from '@/components/ui/skeleton';
+import { Separator } from '@/components/ui/separator';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { ArrowLeft, Calendar, FileText, Users, Edit, Trash2, Target, BookOpen, Clock } from 'lucide-react';
 import Navigation from '@/components/Navigation';
 import { useAssignments } from '@/hooks/useAssignments';
-import { Skeleton } from '@/components/ui/skeleton';
+import SubmissionHistory from '@/components/SubmissionHistory';
+import { format } from 'date-fns';
 
 const AssignmentDetailPage = () => {
   const { id } = useParams<{ id: string }>();
@@ -90,88 +94,107 @@ const AssignmentDetailPage = () => {
           Back to Assignments
         </Button>
 
-        <div className="space-y-6">
-          {/* Assignment Header */}
-          <Card className="card-elevated">
-            <CardHeader>
-              <div className="flex items-start justify-between">
-                <div>
-                  <CardTitle className="text-2xl font-bold mb-2">{assignment.title}</CardTitle>
-                  <p className="text-muted-foreground">
-                    Created on {new Date(assignment.created_at).toLocaleDateString()}
-                  </p>
-                </div>
-                <div className="flex items-center gap-2">
-                  {getStatusBadge(assignment)}
-                  <Button variant="outline" size="sm">
-                    <Edit className="mr-2 h-4 w-4" />
-                    Edit
-                  </Button>
-                  <Button variant="outline" size="sm" onClick={handleDelete}>
-                    <Trash2 className="mr-2 h-4 w-4" />
-                    Delete
-                  </Button>
-                </div>
-              </div>
-            </CardHeader>
-            <CardContent>
-              {assignment.description && (
-                <div className="mb-6">
-                  <h3 className="font-semibold mb-2">Description</h3>
-                  <p className="text-muted-foreground whitespace-pre-wrap">{assignment.description}</p>
-                </div>
-              )}
+        <Tabs defaultValue="details" className="space-y-6">
+          <TabsList className="grid w-full grid-cols-2">
+            <TabsTrigger value="details">Assignment Details</TabsTrigger>
+            <TabsTrigger value="submissions">Submissions & Grades</TabsTrigger>
+          </TabsList>
 
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                {assignment.due_date && (
-                  <div className="flex items-center">
-                    <Calendar className="mr-2 h-4 w-4 text-muted-foreground" />
-                    <div>
-                      <p className="text-sm font-medium">Due Date</p>
-                      <p className="text-sm text-muted-foreground">
-                        {new Date(assignment.due_date).toLocaleDateString()}
+          <TabsContent value="details" className="space-y-6">
+            {/* Assignment Header */}
+            <Card className="card-elevated">
+              <CardHeader>
+                <div className="flex items-start justify-between">
+                  <div>
+                    <CardTitle className="text-2xl font-bold mb-2 flex items-center">
+                      <BookOpen className="mr-3 h-6 w-6 text-primary" />
+                      {assignment.title}
+                    </CardTitle>
+                    <div className="flex items-center space-x-4 text-sm text-muted-foreground">
+                      <div className="flex items-center">
+                        <Calendar className="mr-1 h-4 w-4" />
+                        Created {format(new Date(assignment.created_at), 'MMMM d, yyyy')}
+                      </div>
+                      {assignment.due_date && (
+                        <div className="flex items-center">
+                          <Clock className="mr-1 h-4 w-4" />
+                          Due {format(new Date(assignment.due_date), 'MMMM d, yyyy')}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    {getStatusBadge(assignment)}
+                    <Button variant="outline" size="sm" onClick={() => navigate('/create')}>
+                      <Edit className="mr-2 h-4 w-4" />
+                      Edit
+                    </Button>
+                    <Button variant="outline" size="sm" onClick={handleDelete}>
+                      <Trash2 className="mr-2 h-4 w-4" />
+                      Delete
+                    </Button>
+                  </div>
+                </div>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                {assignment.description && (
+                  <div>
+                    <h3 className="font-semibold text-foreground mb-3 flex items-center">
+                      <FileText className="mr-2 h-4 w-4" />
+                      Description
+                    </h3>
+                    <div className="bg-muted/30 p-4 rounded-lg">
+                      <p className="text-foreground leading-relaxed whitespace-pre-wrap">
+                        {assignment.description}
                       </p>
                     </div>
                   </div>
                 )}
 
-                {assignment.total_points && (
-                  <div className="flex items-center">
-                    <FileText className="mr-2 h-4 w-4 text-muted-foreground" />
-                    <div>
-                      <p className="text-sm font-medium">Total Points</p>
-                      <p className="text-sm text-muted-foreground">{assignment.total_points} points</p>
-                    </div>
-                  </div>
-                )}
+                <Separator />
 
-                <div className="flex items-center">
-                  <Users className="mr-2 h-4 w-4 text-muted-foreground" />
-                  <div>
-                    <p className="text-sm font-medium">Submissions</p>
-                    <p className="text-sm text-muted-foreground">0 submissions</p>
-                  </div>
+                {/* Assignment Details Grid */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  <Card className="border-primary/20">
+                    <CardContent className="p-4 text-center">
+                      <div className="flex items-center justify-center mb-2">
+                        <Target className="h-8 w-8 text-primary" />
+                      </div>
+                      <div className="text-2xl font-bold text-primary">
+                        {assignment.total_points}
+                      </div>
+                      <p className="text-sm text-muted-foreground">Total Points</p>
+                    </CardContent>
+                  </Card>
+
+                  <Card className="border-success/20">
+                    <CardContent className="p-4 text-center">
+                      <div className="flex items-center justify-center mb-2">
+                        <Users className="h-8 w-8 text-success" />
+                      </div>
+                      <div className="text-2xl font-bold text-success">0</div>
+                      <p className="text-sm text-muted-foreground">Submissions</p>
+                    </CardContent>
+                  </Card>
+
+                  <Card className="border-warning/20">
+                    <CardContent className="p-4 text-center">
+                      <div className="flex items-center justify-center mb-2">
+                        <Clock className="h-8 w-8 text-warning" />
+                      </div>
+                      <div className="text-2xl font-bold text-warning">0</div>
+                      <p className="text-sm text-muted-foreground">Pending Reviews</p>
+                    </CardContent>
+                  </Card>
                 </div>
-              </div>
-            </CardContent>
-          </Card>
+              </CardContent>
+            </Card>
+          </TabsContent>
 
-          {/* Submissions Section */}
-          <Card className="card-elevated">
-            <CardHeader>
-              <CardTitle>Submissions</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-center py-8">
-                <Users className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
-                <h3 className="text-lg font-semibold mb-2">No Submissions Yet</h3>
-                <p className="text-muted-foreground">
-                  Students haven't submitted any work for this assignment yet.
-                </p>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
+          <TabsContent value="submissions">
+            <SubmissionHistory assignmentId={assignment.id} />
+          </TabsContent>
+        </Tabs>
       </div>
     </div>
   );

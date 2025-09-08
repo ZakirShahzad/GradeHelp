@@ -9,6 +9,7 @@ import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { useAssignments } from '@/hooks/useAssignments';
+import { useSubmissions } from '@/hooks/useSubmissions';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { 
@@ -18,8 +19,11 @@ import {
   AlertCircle, 
   Brain,
   Download,
-  Trash2
+  Trash2,
+  Users
 } from 'lucide-react';
+import StudentManagement from '@/components/StudentManagement';
+import { Student } from '@/hooks/useSubmissions';
 
 interface SubmissionData {
   studentName: string;
@@ -36,11 +40,19 @@ interface BulkGradingInterfaceProps {
 
 export const BulkGradingInterface: React.FC<BulkGradingInterfaceProps> = ({ onTabChange }) => {
   const { assignments, loading: assignmentsLoading } = useAssignments();
+  const { 
+    students, 
+    createStudent, 
+    createSubmission, 
+    updateSubmission: updateDbSubmission,
+    fetchStudents 
+  } = useSubmissions();
   const { toast } = useToast();
   
   const [selectedAssignment, setSelectedAssignment] = useState('');
   const [rubric, setRubric] = useState('');
   const [submissions, setSubmissions] = useState<SubmissionData[]>([]);
+  const [selectedStudents, setSelectedStudents] = useState<Student[]>([]);
   const [isGrading, setIsGrading] = useState(false);
   const [gradingProgress, setGradingProgress] = useState(0);
 
@@ -74,8 +86,8 @@ export const BulkGradingInterface: React.FC<BulkGradingInterfaceProps> = ({ onTa
     }]);
   };
 
-  // Update submission
-  const updateSubmission = (index: number, field: keyof SubmissionData, value: string) => {
+  // Update local submission state
+  const updateLocalSubmission = (index: number, field: keyof SubmissionData, value: string) => {
     setSubmissions(prev => prev.map((sub, i) => 
       i === index ? { ...sub, [field]: value } : sub
     ));
@@ -140,6 +152,36 @@ export const BulkGradingInterface: React.FC<BulkGradingInterfaceProps> = ({ onTa
             result: data.grading 
           } : sub
         ));
+
+        // Save results to database
+        try {
+          // Find or create student
+          let student = students.find(s => 
+            `${s.first_name} ${s.last_name}`.toLowerCase() === submission.studentName.toLowerCase()
+          );
+          
+          if (!student) {
+            const nameParts = submission.studentName.split(' ');
+            const firstName = nameParts[0] || 'Unknown';
+            const lastName = nameParts.slice(1).join(' ') || 'Student';
+            
+            student = await createStudent({
+              first_name: firstName,
+              last_name: lastName,
+            });
+          }
+
+          // Create or update submission with grading results
+          await createSubmission({
+            assignment_id: selectedAssignment,
+            student_id: student.id,
+            score: data.grading.score,
+            feedback: data.grading.feedback,
+            submitted_at: new Date().toISOString(),
+          });
+        } catch (dbError) {
+          console.error('Error saving to database:', dbError);
+        }
 
       } catch (error) {
         console.error('Error grading submission:', error);
@@ -247,6 +289,12 @@ export const BulkGradingInterface: React.FC<BulkGradingInterfaceProps> = ({ onTa
           </CardContent>
         </Card>
 
+        {/* Student Management */}
+        <StudentManagement 
+          onStudentSelect={setSelectedStudents}
+          selectedStudents={selectedStudents.map(s => s.id)}
+        />
+
         {/* File Upload */}
         <Card>
           <CardHeader>
@@ -255,10 +303,19 @@ export const BulkGradingInterface: React.FC<BulkGradingInterfaceProps> = ({ onTa
               Upload Student Submissions
             </CardTitle>
             <CardDescription>
-              Upload text files or add submissions manually
+              Upload text files or add submissions manually for selected students
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
+            {selectedStudents.length > 0 && (
+              <div className="p-3 bg-primary/5 rounded-lg border border-primary/20">
+                <p className="text-sm text-foreground">
+                  <Users className="inline mr-1 h-4 w-4" />
+                  {selectedStudents.length} students selected for grading
+                </p>
+              </div>
+            )}
+            
             <div className="flex gap-4">
               <div className="flex-1">
                 <Input
@@ -273,7 +330,11 @@ export const BulkGradingInterface: React.FC<BulkGradingInterfaceProps> = ({ onTa
                 </p>
               </div>
               
-              <Button onClick={addManualSubmission} variant="outline">
+              <Button 
+                onClick={addManualSubmission} 
+                variant="outline"
+                disabled={selectedStudents.length === 0}
+              >
                 Add Manual Entry
               </Button>
             </div>
@@ -330,7 +391,7 @@ export const BulkGradingInterface: React.FC<BulkGradingInterfaceProps> = ({ onTa
                         <FileText className="h-4 w-4 text-muted-foreground" />
                         <Input
                           value={submission.studentName}
-                          onChange={(e) => updateSubmission(index, 'studentName', e.target.value)}
+                          onChange={(e) => updateLocalSubmission(index, 'studentName', e.target.value)}
                           placeholder="Student Name"
                           className="font-medium"
                         />
@@ -359,7 +420,7 @@ export const BulkGradingInterface: React.FC<BulkGradingInterfaceProps> = ({ onTa
 
                     <Textarea
                       value={submission.content}
-                      onChange={(e) => updateSubmission(index, 'content', e.target.value)}
+                      onChange={(e) => updateLocalSubmission(index, 'content', e.target.value)}
                       placeholder="Student submission text..."
                       rows={3}
                     />
