@@ -5,6 +5,8 @@ import { Badge } from '@/components/ui/badge';
 import { Textarea } from '@/components/ui/textarea';
 import { Slider } from '@/components/ui/slider';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { supabase } from '@/integrations/supabase/client';
+import { useToast } from '@/hooks/use-toast';
 import { 
   Brain,
   ThumbsUp,
@@ -22,15 +24,24 @@ import {
 interface GradingInterfaceProps {
   studentName?: string;
   assignmentTitle?: string;
+  assignmentId?: string;
+  submissionText?: string;
+  onSaveGrade?: (grade: number, feedback: string) => void;
 }
 
 export const GradingInterface: React.FC<GradingInterfaceProps> = ({
   studentName = "Sarah Martinez",
-  assignmentTitle = "Essay: American Revolution Analysis"
+  assignmentTitle = "Essay: American Revolution Analysis",
+  assignmentId,
+  submissionText = "The American Revolution was not merely a conflict between Britain and its colonies, but a fundamental struggle for the principles of liberty, self-determination, and democratic governance...",
+  onSaveGrade
 }) => {
+  const { toast } = useToast();
   const [currentGrade, setCurrentGrade] = useState([87]);
   const [feedback, setFeedback] = useState("Excellent analysis of the causes leading to the American Revolution. Your thesis statement is clear and well-supported by historical evidence. The essay demonstrates strong critical thinking skills and provides thoughtful connections between different historical events.");
   const [isEditing, setIsEditing] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+  const [isGrading, setIsGrading] = useState(false);
 
   const aiSuggestions = {
     grade: 87,
@@ -61,6 +72,75 @@ export const GradingInterface: React.FC<GradingInterfaceProps> = ({
   const totalScore = aiSuggestions.rubricBreakdown.reduce((sum, item) => sum + item.score, 0);
   const totalPossible = aiSuggestions.rubricBreakdown.reduce((sum, item) => sum + item.total, 0);
 
+  // AI grading function
+  const handleAIGrading = async () => {
+    if (!assignmentId) {
+      toast({
+        title: "Missing Assignment",
+        description: "Assignment ID is required for AI grading.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    setIsGrading(true);
+    try {
+      const { data, error } = await supabase.functions.invoke('grade-assignments', {
+        body: {
+          assignmentId,
+          submissionText,
+          studentName,
+          rubric: "Standard essay rubric focusing on thesis, evidence, organization, and mechanics"
+        }
+      });
+
+      if (error) throw error;
+
+      if (data?.grading) {
+        setCurrentGrade([data.grading.score || 87]);
+        setFeedback(data.grading.feedback || feedback);
+        
+        toast({
+          title: "AI Grading Complete",
+          description: "The assignment has been graded by AI.",
+        });
+      }
+    } catch (error) {
+      console.error('Error with AI grading:', error);
+      toast({
+        title: "Grading Error",
+        description: "Failed to get AI grading. Please try again.",
+        variant: "destructive"
+      });
+    } finally {
+      setIsGrading(false);
+    }
+  };
+
+  // Save grade function
+  const handleSaveGrade = async () => {
+    setIsSaving(true);
+    try {
+      if (onSaveGrade) {
+        await onSaveGrade(currentGrade[0], feedback);
+      }
+      
+      toast({
+        title: "Grade Saved",
+        description: "The grade and feedback have been saved successfully.",
+      });
+    } catch (error) {
+      console.error('Error saving grade:', error);
+      toast({
+        title: "Save Error",
+        description: "Failed to save grade. Please try again.",
+        variant: "destructive"
+      });
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-surface">
       {/* Header */}
@@ -76,13 +156,21 @@ export const GradingInterface: React.FC<GradingInterfaceProps> = ({
                 <Brain className="h-3 w-3" />
                 <span>AI Confidence: {aiSuggestions.confidence}%</span>
               </Badge>
-              <Button variant="outline">
+              <Button 
+                variant="outline"
+                onClick={handleSaveGrade}
+                disabled={isSaving}
+              >
                 <Save className="mr-2 h-4 w-4" />
-                Save Draft
+                {isSaving ? 'Saving...' : 'Save Grade'}
               </Button>
-              <Button variant="success">
-                <Send className="mr-2 h-4 w-4" />
-                Send to Student
+              <Button 
+                onClick={handleAIGrading}
+                disabled={isGrading}
+                variant="secondary"
+              >
+                <Brain className="mr-2 h-4 w-4" />
+                {isGrading ? 'AI Grading...' : 'Get AI Grade'}
               </Button>
             </div>
           </div>
@@ -103,20 +191,14 @@ export const GradingInterface: React.FC<GradingInterfaceProps> = ({
               </CardHeader>
               <CardContent>
                 <div className="bg-surface p-4 rounded-lg border border-border max-h-96 overflow-y-auto">
-                  <p className="text-sm text-foreground leading-relaxed">
-                    <strong>The American Revolution: A Fight for Liberty and Self-Determination</strong>
-                  </p>
-                  <br />
-                  <p className="text-sm text-foreground leading-relaxed">
-                    The American Revolution was not merely a conflict between Britain and its colonies, but a fundamental struggle for the principles of liberty, self-determination, and democratic governance. While multiple factors contributed to this watershed moment in history, the primary causes can be traced to British policies that violated colonists' rights as English citizens, economic exploitation through unfair taxation, and the colonists' evolving political consciousness.
-                  </p>
-                  <br />
-                  <p className="text-sm text-foreground leading-relaxed">
-                    The Stamp Act of 1765 marked a critical turning point in colonial-British relations. Unlike previous taxes that regulated trade, this act directly taxed colonists for legal documents, newspapers, and other paper goods. As John Adams later wrote, "The Revolution was in the minds and hearts of the people," highlighting how such policies awakened colonial resistance...
-                  </p>
-                  <div className="text-center text-muted-foreground text-sm mt-4">
-                    [Document continues...]
+                  <div className="text-sm text-foreground leading-relaxed whitespace-pre-wrap">
+                    {submissionText}
                   </div>
+                  {submissionText.length > 500 && (
+                    <div className="text-center text-muted-foreground text-sm mt-4">
+                      [Showing submission text...]
+                    </div>
+                  )}
                 </div>
               </CardContent>
             </Card>

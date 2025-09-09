@@ -61,19 +61,42 @@ export const BulkGradingInterface: React.FC<BulkGradingInterfaceProps> = ({ onTa
     const files = Array.from(e.target.files || []);
     
     files.forEach((file) => {
-      const reader = new FileReader();
-      reader.onload = (event) => {
-        const content = event.target?.result as string;
-        const studentName = file.name.split('.')[0].replace(/[_-]/g, ' ');
-        
-        setSubmissions(prev => [...prev, {
-          studentName,
-          content,
-          file,
-          status: 'pending'
-        }]);
-      };
-      reader.readAsText(file);
+      const studentName = file.name.split('.')[0].replace(/[_-]/g, ' ');
+      
+      // Handle different file types
+      if (file.type === 'text/plain' || file.name.endsWith('.txt') || file.name.endsWith('.md')) {
+        const reader = new FileReader();
+        reader.onload = (event) => {
+          const content = event.target?.result as string;
+          setSubmissions(prev => [...prev, {
+            studentName,
+            content,
+            file,
+            status: 'pending'
+          }]);
+        };
+        reader.readAsText(file);
+      } else if (file.type === 'application/pdf' || file.name.endsWith('.pdf')) {
+        // For PDF files, we'll need to extract text content
+        toast({
+          title: "PDF Upload",
+          description: "PDF text extraction will be implemented. For now, please convert to .txt format.",
+          variant: "destructive"
+        });
+      } else if (file.name.endsWith('.docx') || file.name.endsWith('.doc')) {
+        // For Word documents
+        toast({
+          title: "Word Document",
+          description: "Word document processing will be implemented. For now, please convert to .txt format.",
+          variant: "destructive"
+        });
+      } else {
+        toast({
+          title: "Unsupported File Type",
+          description: "Please upload .txt, .md files. PDF and Word support coming soon.",
+          variant: "destructive"
+        });
+      }
     });
   };
 

@@ -125,6 +125,83 @@ export const SettingsPage: React.FC<SettingsPageProps> = ({ onTabChange }) => {
     await signOut();
   };
 
+  // Password reset function
+  const handlePasswordReset = async () => {
+    if (!user?.email) {
+      toast({
+        title: "Error",
+        description: "No email found for password reset.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(user.email, {
+        redirectTo: `${window.location.origin}/auth?mode=reset`
+      });
+
+      if (error) throw error;
+
+      toast({
+        title: "Password Reset Sent",
+        description: "Check your email for password reset instructions.",
+      });
+    } catch (error) {
+      console.error('Password reset error:', error);
+      toast({
+        title: "Reset Failed",
+        description: "Failed to send password reset email. Please try again.",
+        variant: "destructive"
+      });
+    }
+  };
+
+  // Data export function
+  const handleDataExport = async () => {
+    if (!user) return;
+
+    try {
+      // Fetch all user data
+      const [assignmentsRes, submissionsRes, studentsRes] = await Promise.all([
+        supabase.from('assignments').select('*').eq('user_id', user.id),
+        supabase.from('submissions').select('*').eq('user_id', user.id),
+        supabase.from('students').select('*').eq('user_id', user.id)
+      ]);
+
+      const exportData = {
+        profile: profile,
+        assignments: assignmentsRes.data || [],
+        submissions: submissionsRes.data || [],
+        students: studentsRes.data || [],
+        exported_at: new Date().toISOString()
+      };
+
+      // Create and download JSON file
+      const blob = new Blob([JSON.stringify(exportData, null, 2)], { 
+        type: 'application/json' 
+      });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `gradeai-data-export-${new Date().toISOString().split('T')[0]}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+
+      toast({
+        title: "Data Exported",
+        description: "Your data has been exported and downloaded as a JSON file.",
+      });
+    } catch (error) {
+      console.error('Export error:', error);
+      toast({
+        title: "Export Failed",
+        description: "Failed to export data. Please try again.",
+        variant: "destructive"
+      });
+    }
+  };
+
   if (profileLoading) {
     return (
       <div className="min-h-screen bg-surface flex items-center justify-center">
@@ -430,10 +507,7 @@ export const SettingsPage: React.FC<SettingsPageProps> = ({ onTabChange }) => {
                     <Button 
                       variant="outline" 
                       className="w-full justify-start"
-                      onClick={() => toast({
-                        title: "Password Reset",
-                        description: "Password reset functionality will be available soon.",
-                      })}
+                      onClick={handlePasswordReset}
                     >
                       Change Password
                     </Button>
@@ -441,10 +515,7 @@ export const SettingsPage: React.FC<SettingsPageProps> = ({ onTabChange }) => {
                     <Button 
                       variant="outline" 
                       className="w-full justify-start"
-                      onClick={() => toast({
-                        title: "Export Data",
-                        description: "Data export functionality will be available soon.",
-                      })}
+                      onClick={handleDataExport}
                     >
                       Export My Data
                     </Button>
